@@ -1,0 +1,290 @@
+/* ============================================================
+   ZEPETO Design Tokens
+   Generated from Figma Variables
+
+   모든 디자인 토큰을 하나의 파일에서 관리합니다.
+   새 토큰 추가 시 해당 섹션에 추가해주세요.
+
+   [목차]
+   1. Typography — Font Family, Weight, Title, Body, Caption
+   2. Color — Gray, White, Background, Point, Gradient, Semantic
+   3. Spacing — (예정)
+   ============================================================ */
+
+:root {
+
+  /* ============================================================
+     1. TYPOGRAPHY
+     ============================================================ */
+
+  /* --------------------------------------------------------
+     Font Families
+     -------------------------------------------------------- */
+  --font-family-display : "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-text    : "SF Pro Text",    -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* --------------------------------------------------------
+     Font Weights
+     -------------------------------------------------------- */
+  --font-weight-regular  : 400;  /* R  */
+  --font-weight-medium   : 500;  /* M  */
+  --font-weight-semibold : 600;  /* SB */
+  --font-weight-bold     : 700;  /* B  */
+  --font-weight-heavy    : 800;  /* H  */
+
+
+  /* ========================================================
+     TITLE  (SF Pro Display)
+     ======================================================== */
+
+  /* Title / 64 Heavy */
+  --font-size-title-64    : 64px;
+  --line-height-title-64  : 70px;
+  --font-title-64-heavy   : var(--font-weight-heavy) var(--font-size-title-64) / var(--line-height-title-64) var(--font-family-display);
+
+  /* Title / 56 Bold */
+  --font-size-title-56    : 56px;
+  --line-height-title-56  : 70px;
+  --font-title-56-bold    : var(--font-weight-bold) var(--font-size-title-56) / var(--line-height-title-56) var(--font-family-display);
+
+  /* Title / 48 Bold */
+  --font-size-title-48    : 48px;
+  --line-height-title-48  : 60px;
+  --font-title-48-bold    : var(--font-weight-bold) var(--font-size-title-48) / var(--line-height-title-48) var(--font-family-display);
+
+  /* Title / 40 Heavy */
+  --font-size-title-40    : 40px;
+  --line-height-title-40  : 48px;
+  --font-title-40-heavy   : var(--font-weight-heavy) var(--font-size-title-40) / var(--line-height-title-40) var(--font-family-display);
+
+  /* Title / 36 Bold */
+  --font-size-title-36    : 36px;
+  --line-height-title-36  : 44px;
+  --font-title-36-bold    : var(--font-weight-bold) var(--font-size-title-36) / var(--line-height-title-36) var(--font-family-display);
+
+  /* Title / 32 Bold */
+  --font-size-title-32    : 32px;
+  --line-height-title-32  : 40px;
+  --font-title-32-bold    : var(--font-weight-bold) var(--font-size-title-32) / var(--line-height-title-32) var(--font-family-display);
+
+  /* Title / 28 */
+  --font-size-title-28    : 28px;
+  --line-height-title-28  : 36px;
+  --font-title-28-heavy   : var(--font-weight-heavy) var(--font-size-title-28) / var(--line-height-title-28) var(--font-family-display);
+  --font-title-28-bold    : var(--font-weight-bold)  var(--font-size-title-28) / var(--line-height-title-28) var(--font-family-display);
+  --font-title-28-regular : var(--font-weight-regular) var(--font-size-title-28) / var(--line-height-title-28) var(--font-family-display);
+
+  /* Title / 26 Semibold */
+  --font-size-title-26    : 26px;
+  --line-height-title-26  : 32px;
+  --font-title-26-semibold: var(--font-weight-semibold) var(--font-size-title-26) / var(--line-height-title-26) var(--font-family-display);
+
+  /* Title / 24 */
+  --font-size-title-24    : 24px;
+  --line-height-title-24  : 32px;
+  --font-title-24-bold    : var(--font-weight-bold)     var(--font-size-title-24) / var(--line-height-title-24) var(--font-family-display);
+  --font-title-24-semibold: var(--font-weight-semibold) var(--font-size-title-24) / var(--line-height-title-24) var(--font-family-display);
+
+  /* Title / 22 */
+  --font-size-title-22    : 22px;
+  --line-height-title-22  : 28px;
+  --font-title-22-bold    : var(--font-weight-bold)     var(--font-size-title-22) / var(--line-height-title-22) var(--font-family-display);
+  --font-title-22-semibold: var(--font-weight-semibold) var(--font-size-title-22) / var(--line-height-title-22) var(--font-family-display);
+  --font-title-22-regular : var(--font-weight-regular)  var(--font-size-title-22) / var(--line-height-title-22) var(--font-family-text);
+
+  /* Title / 20 */
+  --font-size-title-20    : 20px;
+  --line-height-title-20  : 28px;
+  --font-title-20-bold    : var(--font-weight-bold)     var(--font-size-title-20) / var(--line-height-title-20) var(--font-family-display);
+  --font-title-20-semibold: var(--font-weight-semibold) var(--font-size-title-20) / var(--line-height-title-20) var(--font-family-display);
+  --font-title-20-medium  : var(--font-weight-medium)   var(--font-size-title-20) / var(--line-height-title-20) var(--font-family-display);
+  --font-title-20-regular : var(--font-weight-regular)  var(--font-size-title-20) / var(--line-height-title-20) var(--font-family-text);
+
+
+  /* ========================================================
+     BODY  (SF Pro Text)
+     ======================================================== */
+
+  /* Body / 17 */
+  --font-size-body-17    : 17px;
+  --line-height-body-17  : 22px;
+  --font-body-17-bold    : var(--font-weight-bold)     var(--font-size-body-17) / var(--line-height-body-17) var(--font-family-text);
+  --font-body-17-semibold: var(--font-weight-semibold) var(--font-size-body-17) / var(--line-height-body-17) var(--font-family-text);
+  --font-body-17-medium  : var(--font-weight-medium)   var(--font-size-body-17) / var(--line-height-body-17) var(--font-family-text);
+  --font-body-17-regular : var(--font-weight-regular)  var(--font-size-body-17) / var(--line-height-body-17) var(--font-family-text);
+
+  /* Body / 16 */
+  --font-size-body-16    : 16px;
+  --line-height-body-16  : 22px;
+  --font-body-16-bold    : var(--font-weight-bold)     var(--font-size-body-16) / var(--line-height-body-16) var(--font-family-text);
+  --font-body-16-semibold: var(--font-weight-semibold) var(--font-size-body-16) / var(--line-height-body-16) var(--font-family-text);
+  --font-body-16-medium  : var(--font-weight-medium)   var(--font-size-body-16) / var(--line-height-body-16) var(--font-family-text);
+  --font-body-16-regular : var(--font-weight-regular)  var(--font-size-body-16) / var(--line-height-body-16) var(--font-family-text);
+
+  /* Body / 15 */
+  --font-size-body-15    : 15px;
+  --line-height-body-15  : 20px;
+  --font-body-15-bold    : var(--font-weight-bold)     var(--font-size-body-15) / var(--line-height-body-15) var(--font-family-text);
+  --font-body-15-semibold: var(--font-weight-semibold) var(--font-size-body-15) / var(--line-height-body-15) var(--font-family-text);
+  --font-body-15-medium  : var(--font-weight-medium)   var(--font-size-body-15) / var(--line-height-body-15) var(--font-family-text);
+  --font-body-15-regular : var(--font-weight-regular)  var(--font-size-body-15) / var(--line-height-body-15) var(--font-family-text);
+
+  /* Body / 14 */
+  --font-size-body-14       : 14px;
+  --line-height-body-14     : 20px;  /* 기본 line-height */
+  --line-height-body-14-sm  : 18px;  /* _2 variant (타이트한 줄간격) */
+  --font-body-14-bold       : var(--font-weight-bold)    var(--font-size-body-14) / var(--line-height-body-14)    var(--font-family-text);
+  --font-body-14-bold-sm    : var(--font-weight-bold)    var(--font-size-body-14) / var(--line-height-body-14-sm) var(--font-family-text);
+  --font-body-14-medium     : var(--font-weight-medium)  var(--font-size-body-14) / var(--line-height-body-14)    var(--font-family-text);
+  --font-body-14-medium-sm  : var(--font-weight-medium)  var(--font-size-body-14) / var(--line-height-body-14-sm) var(--font-family-text);
+  --font-body-14-regular    : var(--font-weight-regular) var(--font-size-body-14) / var(--line-height-body-14-sm) var(--font-family-text);
+
+  /* Body / 13 */
+  --font-size-body-13    : 13px;
+  --line-height-body-13  : 18px;
+  --font-body-13-bold    : var(--font-weight-bold)     var(--font-size-body-13) / var(--line-height-body-13) var(--font-family-text);
+  --font-body-13-semibold: var(--font-weight-semibold) var(--font-size-body-13) / var(--line-height-body-13) var(--font-family-text);
+  --font-body-13-medium  : var(--font-weight-medium)   var(--font-size-body-13) / var(--line-height-body-13) var(--font-family-text);
+  --font-body-13-regular : var(--font-weight-regular)  var(--font-size-body-13) / var(--line-height-body-13) var(--font-family-text);
+
+
+  /* ========================================================
+     CAPTION  (SF Pro Text)
+     ======================================================== */
+
+  /* Caption / 12 */
+  --font-size-caption-12    : 12px;
+  --line-height-caption-12  : 16px;
+  --font-caption-12-bold    : var(--font-weight-bold)     var(--font-size-caption-12) / var(--line-height-caption-12) var(--font-family-text);
+  --font-caption-12-semibold: var(--font-weight-semibold) var(--font-size-caption-12) / var(--line-height-caption-12) var(--font-family-text);
+  --font-caption-12-medium  : var(--font-weight-medium)   var(--font-size-caption-12) / var(--line-height-caption-12) var(--font-family-text);
+  --font-caption-12-regular : var(--font-weight-regular)  var(--font-size-caption-12) / var(--line-height-caption-12) var(--font-family-text);
+
+  /* Caption / 11 */
+  --font-size-caption-11    : 11px;
+  --line-height-caption-11  : 16px;
+  --font-caption-11-bold    : var(--font-weight-bold)     var(--font-size-caption-11) / var(--line-height-caption-11) var(--font-family-text);
+  --font-caption-11-semibold: var(--font-weight-semibold) var(--font-size-caption-11) / var(--line-height-caption-11) var(--font-family-text);
+  --font-caption-11-regular : var(--font-weight-regular)  var(--font-size-caption-11) / var(--line-height-caption-11) var(--font-family-text);
+
+  /* Caption / 10 */
+  --font-size-caption-10    : 10px;
+  --line-height-caption-10  : 14px;
+  --font-caption-10-semibold: var(--font-weight-semibold) var(--font-size-caption-10) / var(--line-height-caption-10) var(--font-family-text);
+  --font-caption-10-medium  : var(--font-weight-medium)   var(--font-size-caption-10) / var(--line-height-caption-10) var(--font-family-text);
+
+
+  /* ============================================================
+     2. COLOR
+     ============================================================ */
+
+  /* ========================================================
+     GRAY SOLID (불투명)
+     숫자가 클수록 어둡습니다.
+     ======================================================== */
+  --color-gray-100 : #000008;
+  --color-gray-84  : #292930;
+  --color-gray-72  : #47474D;
+  --color-gray-64  : #5C5C61;
+  --color-gray-54  : #75757A;
+  --color-gray-40  : #99999C;
+  --color-gray-22  : #C7C7C9;
+  --color-gray-12  : #E0E0E1;
+  --color-gray-06  : #F0F0F0;
+
+
+  /* ========================================================
+     GRAY ALPHA (반투명)
+     오버레이, 딤 처리 등에 사용합니다.
+     ======================================================== */
+  --color-gray-alpha-84 : rgba(0, 0, 8, 0.84);
+  --color-gray-alpha-72 : rgba(0, 0, 8, 0.72);
+  --color-gray-alpha-64 : rgba(0, 0, 8, 0.64);
+  --color-gray-alpha-54 : rgba(0, 0, 8, 0.54);
+  --color-gray-alpha-40 : rgba(0, 0, 8, 0.40);
+  --color-gray-alpha-22 : rgba(0, 0, 8, 0.22);
+  --color-gray-alpha-12 : rgba(0, 0, 8, 0.12);
+  --color-gray-alpha-06 : rgba(0, 0, 8, 0.06);
+
+
+  /* ========================================================
+     WHITE SOLID (불투명)
+     ======================================================== */
+  --color-white-100 : #FFFFFF;
+
+
+  /* ========================================================
+     WHITE ALPHA (반투명)
+     다크 배경 위 텍스트, 오버레이 등에 사용합니다.
+     ======================================================== */
+  --color-white-alpha-80 : rgba(255, 255, 255, 0.80);
+  --color-white-alpha-60 : rgba(255, 255, 255, 0.60);
+  --color-white-alpha-48 : rgba(255, 255, 255, 0.48);
+  --color-white-alpha-36 : rgba(255, 255, 255, 0.36);
+  --color-white-alpha-24 : rgba(255, 255, 255, 0.24);
+  --color-white-alpha-12 : rgba(255, 255, 255, 0.12);
+  --color-white-alpha-00 : rgba(255, 255, 255, 0.00);
+
+
+  /* ========================================================
+     BACKGROUND
+     ======================================================== */
+  --color-bg-offwhite-01 : #F5F5F6;
+  --color-bg-offwhite-02 : #F8F8FA;
+  --color-bg-black-100   : rgba(0, 0, 0, 1.00);
+  --color-bg-black-50    : rgba(0, 0, 0, 0.50);
+  --color-bg-black-20    : rgba(0, 0, 0, 0.20);
+
+
+  /* ========================================================
+     POINT (브랜드 & 강조색)
+     ======================================================== */
+  --color-primary          : #5C46FF;
+  --color-primary-12       : rgba(92, 70, 255, 0.12);
+  --color-primary-05       : rgba(92, 70, 255, 0.05);
+
+  --color-red              : #FB3559;
+  --color-purple           : #F323FF;
+  --color-yellow           : #FFC700;
+
+  --color-premium-blue     : #300DB2;
+  --color-premium-red      : #FF005C;
+
+
+  /* ========================================================
+     GRADIENT
+     ⚠️ 피그마에서 정확한 값 확인 후 업데이트 필요
+     ======================================================== */
+  /* --gradient-brand    : linear-gradient(...); */
+  /* --gradient-premium  : linear-gradient(...); */
+
+
+  /* ========================================================
+     SEMANTIC (시맨틱 토큰)
+     용도 기반으로 색상을 매핑합니다.
+     이벤트마다 이 값만 교체하면 전체 테마가 바뀝니다.
+     ======================================================== */
+  --color-text-default     : var(--color-gray-84);
+  --color-text-secondary   : var(--color-gray-64);
+  --color-text-disabled    : var(--color-gray-40);
+  --color-text-on-dark     : var(--color-white-100);
+  --color-text-on-dark-sub : var(--color-white-alpha-80);
+
+  --color-border-default   : var(--color-gray-12);
+  --color-border-strong    : var(--color-gray-22);
+
+  --color-surface-default  : var(--color-white-100);
+  --color-surface-secondary: var(--color-bg-offwhite-02);
+
+  --color-dim              : var(--color-gray-alpha-54);
+
+  --color-accent           : var(--color-primary);
+  --color-error            : var(--color-red);
+  --color-highlight        : var(--color-yellow);
+
+
+  /* ============================================================
+     3. SPACING (예정)
+     ============================================================ */
+
+}
