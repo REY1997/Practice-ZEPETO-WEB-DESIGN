@@ -26,8 +26,8 @@
 - 크기: 375 × 248px
 
 ### TabSection
-- 활성 탭: bold, `#292930`, 하단 바 표시
-- 비활성 탭: medium, `#99999C`, 하단 바 없음
+- 활성 탭: bold, `var(--color-gray-84)`, 하단 바 표시
+- 비활성 탭: medium, `var(--color-gray-40)`, 하단 바 없음
 - 탭 아이템은 동적으로 추가 가능
 
 ### ParticipationSection
@@ -48,4 +48,4 @@
 ### DisclaimerSection
 - 페이지 최하단 footer 역할
 - 불릿 리스트 형태로 유의사항 나열, 아이템 수는 유동적
-- 배경: `#f5f5f6`
+- 배경: `var(--color-bg-offwhite-01)`

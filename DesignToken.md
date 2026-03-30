@@ -8,8 +8,9 @@
 ## 목차
 1. [Typography (타이포그래피)](#1-typography-타이포그래피)
 2. [Color (컬러)](#2-color-컬러)
-3. [Spacing (간격)](#3-spacing-간격) *(예정)*
-4. [사용 방법](#4-사용-방법)
+3. [Breakpoint (브레이크포인트)](#3-breakpoint-브레이크포인트)
+4. [Spacing (간격)](#4-spacing-간격) *(예정)*
+5. [사용 방법](#5-사용-방법)
 
 ---
 
@@ -218,7 +219,20 @@
 
 ---
 
-## 3. Spacing (간격)
+## 3. Breakpoint (브레이크포인트)
+
+| 구간 | 대응 해상도 | 디자인 시안 기준 |
+|------|------------|----------------|
+| Desktop | 1200px ~ | 1440px |
+| Tablet - landscape | 1024px ~ 1199px | 1024px |
+| Tablet - portrait | 600px ~ 1023px | 768px |
+| Mobile | 0px ~ 599px | 375px |
+
+- 컨텐츠 최대 영역: `1600px`
+
+---
+
+## 4. Spacing (간격)
 
 > *다음 단계에서 추가 예정*
 
@@ -281,6 +295,12 @@ font 굵기:     heavy | bold | semibold | medium | regular
 color 그룹:  gray | white | primary | red | ...
 color 시맨틱: text-default | text-secondary | border-default | ...
 ```
+
+### 토큰 적용 기준
+
+- 이 파일에 정의된 토큰과 **동일한 값이 있으면 반드시 토큰으로 매핑**합니다.
+- 토큰에 없는 값(예: 이벤트 전용 색상)은 **hex 또는 raw 값을 그대로 사용**합니다.
+- 토큰 추가가 필요하다고 판단되면 피그마와 논의 후 이 문서와 `tokens.css`를 함께 업데이트합니다.
 
 ---
 
