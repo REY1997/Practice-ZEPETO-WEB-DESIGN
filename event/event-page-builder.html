@@ -10,76 +10,160 @@
   <style>
     /* ── Design Tokens ───────────────────────────────── */
     :root {
+      --color-gray-100      : #000008;
       --color-gray-84       : #292930;
+      --color-gray-72       : #47474D;
       --color-gray-64       : #5C5C61;
       --color-gray-54       : #75757A;
       --color-gray-40       : #99999C;
+      --color-gray-22       : #C7C7C9;
       --color-gray-12       : #E0E0E1;
+      --color-gray-06       : #F0F0F0;
       --color-white-100     : #FFFFFF;
       --color-bg-offwhite-01: #F5F5F6;
+      --color-bg-offwhite-02: #F8F8FA;
       --color-primary       : #5C46FF;
       --font-family-display : "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
       --font-family-text    : "SF Pro Text",    -apple-system, BlinkMacSystemFont, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-family-text); background: #EBEBED; min-height: 100vh; }
+    body { font-family: var(--font-family-text); background: #DDDDE0; min-height: 100vh; }
 
     /* ── Layout ──────────────────────────────────────── */
-    .builder { display: flex; gap: 32px; padding: 32px; align-items: flex-start; }
+    .builder {
+      display: flex;
+      padding: 32px;
+      padding-right: calc(280px + 32px);
+      align-items: flex-start;
+      min-height: 100vh;
+      justify-content: center;
+    }
 
     /* ── Preview (왼쪽) ──────────────────────────────── */
     .preview-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-    .preview-badge { font-size: 12px; color: var(--color-gray-54); margin-bottom: 14px; }
+    .preview-badge {
+      font-size: 11px; font-weight: 600; color: var(--color-gray-54);
+      margin-bottom: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    }
     .phone-frame {
       width: 375px; background: var(--color-white-100);
       border-radius: 24px; overflow: hidden;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.14);
+      box-shadow: 0 12px 60px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    /* ── Panel (오른쪽) ──────────────────────────────── */
-    .panel { width: 280px; flex-shrink: 0; position: sticky; top: 32px; display: flex; flex-direction: column; gap: 8px; }
+    /* ── Fixed Panel (오른쪽) ────────────────────────── */
+    .panel {
+      position: fixed;
+      right: 0; top: 0;
+      width: 280px;
+      height: 100vh;
+      overflow-y: auto;
+      background: #E6E6E9;
+      border-left: 1px solid rgba(0,0,0,0.07);
+      padding: 28px 16px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+    }
     .panel__header {
       font-family: var(--font-family-display);
-      font-size: 13px; font-weight: 700; color: var(--color-gray-54);
-      text-transform: uppercase; letter-spacing: 0.06em; padding: 0 4px 8px;
+      font-size: 11px; font-weight: 700; color: var(--color-gray-54);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 0 4px 10px;
+    }
+    .panel__empty {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px;
+      text-align: center; padding: 40px 16px;
+      color: var(--color-gray-40); font-size: 13px; line-height: 1.6;
+      flex: 1;
+    }
+    .panel__empty-icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .panel__section-label {
+      font-size: 10px; font-weight: 700; color: var(--color-primary);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 2px 4px 10px; opacity: 0.8;
     }
 
-    /* 섹션 카드 */
-    .ctrl-card { background: var(--color-white-100); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 8px rgba(0,0,0,0.07); }
+    /* ── 컨트롤 카드 ─────────────────────────────────── */
+    .ctrl-card { background: var(--color-white-100); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
     .ctrl-card__head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px; cursor: pointer; user-select: none;
+      padding: 13px 16px; cursor: pointer; user-select: none;
     }
     .ctrl-card__head:hover { background: #fafafa; }
     .ctrl-card__label { font-size: 13px; font-weight: 700; color: var(--color-gray-84); }
-    .ctrl-card__badge { font-size: 10px; color: var(--color-gray-40); font-weight: 500; }
-    .ctrl-card__chevron { color: var(--color-gray-40); font-size: 11px; transition: transform 0.2s; }
+    .ctrl-card__badge { font-size: 10px; color: var(--color-gray-40); font-weight: 500; margin-left: 4px; }
+    .ctrl-card__chevron { color: var(--color-gray-40); font-size: 10px; transition: transform 0.18s; }
     .ctrl-card__chevron.open { transform: rotate(180deg); }
-    .ctrl-card__body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 18px; }
+    .ctrl-card__body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
     .ctrl-card__divider { height: 1px; background: var(--color-gray-12); margin: 0 16px; }
 
     .ctrl-group__label {
       font-size: 11px; font-weight: 600; color: var(--color-gray-54);
-      margin-bottom: 10px; letter-spacing: 0.03em;
+      margin-bottom: 8px; letter-spacing: 0.03em;
     }
+    .ctrl-info {
+      font-size: 12px; color: var(--color-gray-40); line-height: 1.6;
+    }
+
+    /* ── 스텝 패널 에디터 ────────────────────────────── */
+    .step-row {
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .step-row__inputs { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .step-row__num {
+      font-size: 11px; font-weight: 700; color: var(--color-gray-54);
+      margin-bottom: 4px;
+    }
+    .step-row__minus {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+      border: 1.5px solid var(--color-gray-12);
+      background: var(--color-white-100);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--color-gray-54); line-height: 1;
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .step-row__minus:hover { border-color: #ff3b30; color: #ff3b30; }
+    .step-panel-input {
+      width: 100%; border: 1px solid var(--color-gray-12);
+      border-radius: 6px; padding: 5px 8px; font-size: 12px;
+      background: var(--color-bg-offwhite-01); outline: none;
+      font-family: var(--font-family-text); color: var(--color-gray-84);
+      resize: none;
+    }
+    .step-panel-input:focus { border-color: var(--color-primary); }
+    .step-panel-add {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 10px; margin-top: 2px;
+      border: 1.5px dashed var(--color-gray-12);
+      border-radius: 8px; cursor: pointer;
+      color: var(--color-gray-40); font-size: 12px; font-weight: 600;
+      transition: border-color 0.12s, color 0.12s; user-select: none;
+    }
+    .step-panel-add:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
     /* ── 이미지 업로드 ───────────────────────────────── */
     .upload-zone {
       border: 1.5px dashed var(--color-gray-12); border-radius: 10px;
-      padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.15s;
+      padding: 14px; text-align: center; cursor: pointer; transition: border-color 0.15s;
     }
     .upload-zone:hover { border-color: var(--color-primary); }
-    .upload-zone__thumb { width: 100%; height: 64px; object-fit: cover; border-radius: 6px; }
-    .upload-zone__hint { font-size: 11px; color: var(--color-gray-40); margin-top: 7px; line-height: 1.5; }
+    .upload-zone__thumb { width: 100%; height: 60px; object-fit: cover; border-radius: 6px; }
+    .upload-zone__hint { font-size: 11px; color: var(--color-gray-40); margin-top: 6px; line-height: 1.5; }
     .upload-zone input[type=file] { display: none; }
-    .upload-reset { display: inline-block; margin-top: 8px; font-size: 11px; color: var(--color-primary); cursor: pointer; text-decoration: underline; }
+    .upload-reset { display: inline-block; margin-top: 7px; font-size: 11px; color: var(--color-primary); cursor: pointer; text-decoration: underline; }
 
-    /* ── Color Picker (Figma 스타일) ─────────────────── */
+    /* ── Color Picker ─────────────────────────────────── */
     .cp { display: flex; flex-direction: column; gap: 10px; }
-
-    /* 2D 팔레트 */
     .cp-palette {
-      position: relative; width: 100%; height: 120px;
+      position: relative; width: 100%; height: 112px;
       border-radius: 6px; cursor: crosshair; overflow: hidden; flex-shrink: 0;
     }
     .cp-palette__sat  { position: absolute; inset: 0; }
@@ -91,8 +175,6 @@
       transform: translate(-50%, -50%);
       pointer-events: none;
     }
-
-    /* Hue 슬라이더 */
     .cp-hue-wrap { position: relative; height: 12px; border-radius: 6px; overflow: hidden; }
     .cp-hue-track {
       position: absolute; inset: 0;
@@ -107,21 +189,19 @@
       -webkit-appearance: none; appearance: none;
     }
     .cp-hue-thumb-overlay {
-      position: absolute; top: 0; bottom: 0;
-      width: 14px; height: 14px; top: -1px;
+      position: absolute; top: -1px;
+      width: 14px; height: 14px;
       border-radius: 50%; border: 2px solid #fff;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.25);
       transform: translateX(-50%);
       pointer-events: none;
     }
-
-    /* Hex 입력 */
     .cp-bottom { display: flex; align-items: center; gap: 8px; }
-    .cp-preview { width: 28px; height: 28px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
+    .cp-preview { width: 26px; height: 26px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
     .cp-hex-wrap {
       flex: 1; display: flex; align-items: center;
       border: 1px solid var(--color-gray-12); border-radius: 6px;
-      padding: 0 8px; height: 28px; background: var(--color-bg-offwhite-01);
+      padding: 0 8px; height: 26px; background: var(--color-bg-offwhite-01);
     }
     .cp-hex-label { font-size: 10px; color: var(--color-gray-40); font-family: monospace; margin-right: 4px; }
     .cp-hex-input {
@@ -130,69 +210,209 @@
       text-transform: uppercase; letter-spacing: 0.04em;
     }
 
-    /* ── Components ──────────────────────────────────── */
-    .nav-bar { height: 52px; display: flex; align-items: center; padding: 0 20px; background: var(--color-white-100); border-bottom: 1px solid var(--color-gray-12); }
+    /* ── 섹션 클릭 선택 래퍼 ────────────────────────── */
+    .sec-wrap {
+      position: relative;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+      transition: outline-color 0.12s;
+      cursor: pointer;
+    }
+    .sec-wrap:hover { outline-color: rgba(92, 70, 255, 0.25); }
+    .sec-wrap.is-active {
+      outline-color: var(--color-primary);
+      z-index: 1;
+      cursor: default;
+    }
+    .sec-wrap.is-active::after {
+      content: attr(data-label);
+      position: absolute;
+      top: 0; left: 0;
+      font-size: 9px; font-weight: 700;
+      color: var(--color-white-100);
+      background: var(--color-primary);
+      padding: 2px 7px 2px 6px;
+      border-radius: 0 0 6px 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── Editable text ───────────────────────────────── */
+    [contenteditable] { outline: none; cursor: text; }
+    [contenteditable]:hover { background: rgba(92,70,255,0.05); border-radius: 3px; }
+    [contenteditable]:focus {
+      background: rgba(92,70,255,0.08);
+      outline: 1px solid rgba(92,70,255,0.35);
+      border-radius: 3px;
+    }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    .nav-bar {
+      height: 52px; display: flex; align-items: center; padding: 0 20px;
+      background: var(--color-white-100);
+      border-bottom: 1px solid var(--color-gray-12);
+    }
     .nav-bar__back { font-size: 17px; color: var(--color-primary); }
 
+    /* ── Hero ────────────────────────────────────────── */
     .hero { width: 375px; height: 248px; position: relative; overflow: hidden; background: var(--color-gray-84); }
     .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .hero__empty {
       width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: linear-gradient(145deg, #292930 0%, #47474D 100%);
-      color: rgba(255,255,255,0.3); font-size: 12px; gap: 8px;
+      color: rgba(255,255,255,0.25); font-size: 12px; gap: 8px;
     }
     .hero__title {
-      position: absolute; bottom: 16px; left: 20px;
+      position: absolute; bottom: 16px; left: 20px; right: 20px;
       color: var(--color-white-100);
       font-family: var(--font-family-display);
-      font-size: 23px; font-weight: 700; line-height: 32px;
-      text-shadow: 0 0 6.25px rgba(0,0,0,0.3); pointer-events: none;
+      font-size: 23px; font-weight: 700; line-height: 1.4;
+      text-shadow: 0px 0px 6.25px rgba(0,0,0,0.3);
+      white-space: pre-wrap;
     }
+    .hero__title:hover { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    .hero__title:focus { background: rgba(255,255,255,0.15); outline: 1px solid rgba(255,255,255,0.5); border-radius: 3px; }
 
-    .tabs { display: flex; padding: 0 20px; background: var(--color-white-100); border-bottom: 1px solid var(--color-gray-12); }
-    .tab { padding: 12px 16px 10px; font-size: 15px; color: var(--color-gray-40); font-weight: 500; border-bottom: 2px solid transparent; cursor: pointer; user-select: none; }
+    /* ── Tabs ────────────────────────────────────────── */
+    .tabs {
+      display: flex; padding: 0 20px;
+      background: var(--color-white-100);
+      border-bottom: 1px solid var(--color-gray-12);
+    }
+    .tab {
+      padding: 12px 16px 10px;
+      font-family: var(--font-family-text);
+      font-size: 15px; color: var(--color-gray-40);
+      font-weight: 500; border-bottom: 2px solid transparent;
+      cursor: pointer; user-select: none;
+    }
     .tab.is-active { color: var(--color-gray-84); font-weight: 700; border-bottom-color: var(--color-gray-84); }
 
+    /* ── Section common ──────────────────────────────── */
     .section-wrap { background: var(--color-white-100); padding: 0 16px 24px; }
-    .section-title { font-family: var(--font-family-display); font-size: 20px; font-weight: 700; color: var(--color-gray-84); line-height: 28px; padding: 6px 0 8px; }
+    .section-title {
+      font-family: var(--font-family-display);
+      font-size: 20px; font-weight: 700; color: var(--color-gray-84);
+      line-height: 28px; padding: 24px 0 8px;
+      display: block; white-space: pre-wrap;
+    }
     .section-inner { padding: 24px 20px; border-radius: 20px; }
 
+    /* ── Participation ───────────────────────────────── */
     .step-list { display: flex; flex-direction: column; }
     .step-item { display: flex; gap: 10px; align-items: flex-start; }
-    .step-timeline { display: flex; flex-direction: column; align-items: center; align-self: stretch; flex-shrink: 0; width: 8px; }
+    .step-timeline { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 8px; align-self: stretch; }
     .step-bullet { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
     .step-line { flex: 1; width: 1px; min-height: 8px; }
     .step-content { flex: 1; padding-bottom: 20px; }
     .step-item:last-child .step-content { padding-bottom: 0; }
-    .step-label { font-family: var(--font-family-text); font-size: 15px; font-weight: 700; line-height: 20px; }
-    .step-desc { font-family: var(--font-family-text); font-size: 15px; font-weight: 500; color: var(--color-gray-84); line-height: 20px; margin-top: 2px; }
+    .step-label {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 700; line-height: 20px;
+      display: block; white-space: pre-wrap;
+    }
+    .step-desc {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 500; color: var(--color-gray-84);
+      line-height: 20px; margin-top: 2px;
+      display: block; white-space: pre-wrap;
+    }
+    /* ── Step 추가/삭제 버튼 ─────────────────────────── */
+    .step-remove-btn {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.15);
+      background: var(--color-white-100);
+      cursor: pointer; flex-shrink: 0; margin-top: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-gray-54); font-size: 13px; line-height: 1;
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .step-remove-btn:hover { border-color: #ff3b30; color: #ff3b30; }
+    .step-add-btn {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 14px; padding: 7px 10px;
+      border: 1.5px dashed var(--color-gray-12);
+      border-radius: 8px; cursor: pointer;
+      color: var(--color-gray-40); font-size: 12px; font-weight: 600;
+      transition: border-color 0.12s, color 0.12s;
+      user-select: none;
+    }
+    .step-add-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .step-add-icon {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1.5px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
 
-    .tip-list { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); }
+    .tip-list { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); }
     .tip-item { display: flex; flex-direction: column; gap: 6px; }
-    .tip-tag { display: inline-flex; align-items: center; height: 20px; padding: 4px 10px 3px; border-radius: 4px; background: #ff58a4; font-family: var(--font-family-text); font-size: 11px; font-weight: 700; color: var(--color-white-100); align-self: flex-start; }
-    .tip-text { font-family: var(--font-family-text); font-size: 15px; font-weight: 500; color: var(--color-gray-84); line-height: 20px; }
+    .tip-tag {
+      display: inline-flex; align-items: center; height: 20px;
+      padding: 4px 10px 3px; border-radius: 4px; background: #ff58a4;
+      font-family: var(--font-family-text); font-size: 11px; font-weight: 700;
+      color: var(--color-white-100); align-self: flex-start;
+    }
+    .tip-text {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 500; color: var(--color-gray-84);
+      line-height: 20px; display: block; white-space: pre-wrap;
+    }
 
-    .reward-list { display: flex; flex-direction: column; gap: 14px; }
-    .reward-item { display: flex; align-items: center; gap: 12px; }
-    .reward-rank { font-size: 14px; font-weight: 700; color: var(--color-gray-84); width: 36px; }
-    .reward-info { flex: 1; }
-    .reward-name { font-size: 14px; font-weight: 600; color: var(--color-gray-84); }
-    .reward-sub { font-size: 12px; color: var(--color-gray-54); margin-top: 2px; }
-    .reward-img { width: 48px; height: 48px; border-radius: 10px; background: rgba(0,0,0,0.08); flex-shrink: 0; }
+    /* ── Reward ──────────────────────────────────────── */
+    .reward-list { display: flex; flex-direction: column; }
+    .reward-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .reward-item:last-child { border-bottom: none; }
+    .reward-text {
+      flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0;
+    }
+    .reward-rank {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 700; line-height: 20px;
+      white-space: pre-wrap;
+    }
+    .reward-name {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 600; color: var(--color-gray-84);
+      line-height: 20px; white-space: pre-wrap;
+    }
+    .reward-img {
+      width: 90px; height: 60px; flex-shrink: 0; overflow: hidden;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #e0f0ff 0%, #c2e0ff 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
 
-    .period-list { display: flex; flex-direction: column; }
-    .period-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
-    .period-item:last-child { border-bottom: none; }
-    .period-label { font-size: 13px; color: var(--color-gray-54); }
-    .period-value { font-size: 13px; font-weight: 600; color: var(--color-gray-84); }
+    /* ── Period ──────────────────────────────────────── */
+    .period-text {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 600; color: var(--color-gray-84);
+      line-height: 20px; white-space: pre-wrap; display: block;
+    }
 
-    .disclaimer { background: var(--color-bg-offwhite-01); padding: 24px 16px 64px; }
-    .disclaimer__title { font-size: 15px; font-weight: 700; color: var(--color-gray-54); margin-bottom: 12px; }
-    .disclaimer__list { display: flex; flex-direction: column; gap: 10px; }
-    .disclaimer__item { display: flex; gap: 6px; }
-    .disclaimer__bullet { font-size: 10px; color: var(--color-gray-54); line-height: 18px; flex-shrink: 0; }
-    .disclaimer__text { font-size: 13px; color: var(--color-gray-54); line-height: 18px; }
+    /* ── Disclaimer ──────────────────────────────────── */
+    .disclaimer { background: var(--color-bg-offwhite-01); padding: 32px 16px 70px; }
+    .disclaimer__title {
+      font-family: var(--font-family-text);
+      font-size: 15px; font-weight: 700; color: var(--color-gray-54);
+      margin-bottom: 14px; display: block; white-space: pre-wrap;
+    }
+    .disclaimer__list { display: flex; flex-direction: column; gap: 12px; }
+    .disclaimer__item { display: flex; gap: 7px; }
+    .disclaimer__bullet { font-size: 11px; color: var(--color-gray-54); line-height: 18px; flex-shrink: 0; margin-top: 1px; }
+    .disclaimer__text {
+      font-family: var(--font-family-text);
+      font-size: 13px; font-weight: 400; color: var(--color-gray-54);
+      line-height: 18px; white-space: pre-wrap; display: block;
+    }
   </style>
 </head>
 <body>
@@ -208,7 +428,6 @@ function hsvToHex(h, s, v) {
   return '#' + [f(5), f(3), f(1)]
     .map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
 }
-
 function hexToHsv(hex) {
   const r = parseInt(hex.slice(1,3),16)/255;
   const g = parseInt(hex.slice(3,5),16)/255;
@@ -223,10 +442,51 @@ function hexToHsv(hex) {
   }
   return { h: Math.round(h), s: max ? Math.round((d / max) * 100) : 0, v: Math.round(max * 100) };
 }
+function isValidHex(h) { return /^#[0-9a-fA-F]{6}$/.test(h); }
 
-function isValidHex(hex) { return /^#[0-9a-fA-F]{6}$/.test(hex); }
+/* ── EditableText ────────────────────────────────────── */
+/*
+ * contentEditable을 React state와 충돌 없이 쓰는 패턴:
+ * - 마운트 시 초기값을 DOM에 직접 세팅
+ * - 외부(value prop)가 바뀔 때만 DOM 갱신 (lastValueRef 비교)
+ * - onBlur에서 state 업데이트, lastValueRef도 갱신
+ * → 다른 state 변경으로 re-render 되어도 편집 내용 유지
+ */
+function EditableText({ tag: Tag = 'span', className, style, value, onChange }) {
+  const domRef = useRef(null);
+  const lastValueRef = useRef(value);
 
-/* ── ColorPicker 컴포넌트 ────────────────────────────── */
+  useEffect(() => {
+    if (domRef.current) {
+      domRef.current.innerText = value;
+      lastValueRef.current = value;
+    }
+  }, []); // eslint-disable-line
+
+  useEffect(() => {
+    if (domRef.current && value !== lastValueRef.current) {
+      domRef.current.innerText = value;
+      lastValueRef.current = value;
+    }
+  }, [value]);
+
+  return (
+    <Tag
+      ref={domRef}
+      className={className}
+      style={style}
+      contentEditable
+      suppressContentEditableWarning
+      onBlur={(e) => {
+        const newVal = e.currentTarget.innerText;
+        lastValueRef.current = newVal;
+        onChange && onChange(newVal);
+      }}
+    />
+  );
+}
+
+/* ── ColorPicker ─────────────────────────────────────── */
 function ColorPicker({ hex, onChange }) {
   const { h, s, v } = hexToHsv(hex);
   const paletteRef = useRef();
@@ -237,69 +497,48 @@ function ColorPicker({ hex, onChange }) {
 
   const pureHueHex = hsvToHex(h, 100, 100);
 
-  /* 2D 팔레트에서 위치 → S, V 계산 */
   const pickFromPalette = useCallback((e) => {
     const el = paletteRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const nx = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    const ny = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
-    const newS = Math.round(nx * 100);
-    const newV = Math.round((1 - ny) * 100);
-    onChange(hsvToHex(h, newS, newV));
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    const nx = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+    const ny = Math.max(0, Math.min(1, (cy - rect.top) / rect.height));
+    onChange(hsvToHex(h, Math.round(nx * 100), Math.round((1 - ny) * 100)));
   }, [h, onChange]);
 
   const onPaletteDown = (e) => { isDragging.current = true; pickFromPalette(e); };
   const onPaletteMove = (e) => { if (isDragging.current) pickFromPalette(e); };
   const onPaletteUp   = () => { isDragging.current = false; };
 
-  /* Hue 슬라이더 */
-  const onHueChange = (e) => {
-    const newH = +e.target.value;
-    onChange(hsvToHex(newH, s, v));
-  };
+  const onHueChange = (e) => onChange(hsvToHex(+e.target.value, s, v));
 
-  /* Hex 입력 */
   const onHexInput = (e) => {
     const val = e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6).toUpperCase();
     setHexInput(val);
-    if (val.length === 6 && isValidHex('#' + val)) onChange('#' + val);
+    if (val.length === 6) onChange('#' + val);
   };
-
-  /* thumb 위치 */
-  const thumbX = `${s}%`;
-  const thumbY = `${100 - v}%`;
-  const hueThumbX = `calc(${(h / 360) * 100}% )`;
 
   return (
     <div className="cp">
-      {/* 2D 팔레트 */}
       <div
-        className="cp-palette"
-        ref={paletteRef}
-        onMouseDown={onPaletteDown}
-        onMouseMove={onPaletteMove}
-        onMouseUp={onPaletteUp}
-        onMouseLeave={onPaletteUp}
-        onTouchStart={onPaletteDown}
-        onTouchMove={onPaletteMove}
-        onTouchEnd={onPaletteUp}
+        className="cp-palette" ref={paletteRef}
+        onMouseDown={onPaletteDown} onMouseMove={onPaletteMove}
+        onMouseUp={onPaletteUp} onMouseLeave={onPaletteUp}
+        onTouchStart={onPaletteDown} onTouchMove={onPaletteMove} onTouchEnd={onPaletteUp}
       >
         <div className="cp-palette__sat" style={{background: `linear-gradient(to right, #fff, ${pureHueHex})`}} />
         <div className="cp-palette__dark" />
-        <div className="cp-palette__thumb" style={{left: thumbX, top: thumbY, background: hex}} />
+        <div className="cp-palette__thumb" style={{left: `${s}%`, top: `${100-v}%`, background: hex}} />
       </div>
 
-      {/* Hue 슬라이더 */}
       <div className="cp-hue-wrap">
         <div className="cp-hue-track" />
         <input className="cp-hue-input" type="range" min="0" max="360" value={h} onChange={onHueChange} />
-        <div className="cp-hue-thumb-overlay" style={{left: hueThumbX, background: pureHueHex}} />
+        <div className="cp-hue-thumb-overlay" style={{left: `calc(${(h/360)*100}%)`, background: pureHueHex}} />
       </div>
 
-      {/* Hex 입력 + 프리뷰 */}
       <div className="cp-bottom">
         <div className="cp-preview" style={{background: hex}} />
         <div className="cp-hex-wrap">
@@ -317,7 +556,7 @@ function ColorPicker({ hex, onChange }) {
   );
 }
 
-/* ── 아코디언 카드 ───────────────────────────────────── */
+/* ── CtrlCard (아코디언) ─────────────────────────────── */
 function CtrlCard({ label, badge, defaultOpen = true, children }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
@@ -325,7 +564,7 @@ function CtrlCard({ label, badge, defaultOpen = true, children }) {
       <div className="ctrl-card__head" onClick={() => setOpen(o => !o)}>
         <div>
           <span className="ctrl-card__label">{label}</span>
-          {badge && <span className="ctrl-card__badge"> · {badge}</span>}
+          {badge && <span className="ctrl-card__badge">· {badge}</span>}
         </div>
         <span className={`ctrl-card__chevron ${open ? 'open' : ''}`}>▼</span>
       </div>
@@ -337,172 +576,113 @@ function CtrlCard({ label, badge, defaultOpen = true, children }) {
   );
 }
 
-/* ── 샘플 데이터 ─────────────────────────────────────── */
-const STEPS = [
-  { label: 'STEP 1', desc: 'Shop your Iconic Look\nat the Gym Girl Shop' },
-  { label: 'STEP 2', desc: 'Tap the "Join Event" button\non the event page' },
-  { label: 'STEP 3', desc: 'Share with friends\nfor bonus rewards' },
-];
-const TIPS   = [{ text: "샵 '핑크파워' 탭에서 아이템 구매 시,\n당첨 확률 2배로 UP!" }];
-const REWARDS = [
-  { rank: '🥇 1위', name: 'ZEM 10,000', sub: '1명' },
-  { rank: '🥈 2위', name: 'ZEM 5,000',  sub: '3명' },
-  { rank: '🥉 3위', name: 'ZEM 2,000',  sub: '10명' },
-];
-const PERIODS = [
-  { label: '이벤트 기간', value: '2025.02.06 – 02.28' },
-  { label: '당첨자 발표', value: '2025.03.07' },
-  { label: '리워드 지급', value: '발표 후 7일 이내' },
-];
-const DISCLAIMERS = [
-  '하루 1회만 참여할 수 있습니다.',
-  '당첨자 발표는 공식 ZEPETO 채널을 통해 안내됩니다.',
-  '리워드는 참여한 ZEPETO 계정으로 지급됩니다.',
-  '부정 행위가 적발될 경우 당첨이 취소될 수 있습니다.',
-];
-
 /* ── App ─────────────────────────────────────────────── */
 function App() {
-  const [heroImg,   setHeroImg]  = useState(null);
-  const [tab,       setTab]      = useState(0);
-  const [sectionBg, setSectionBg] = useState('#fff4e9'); /* 이벤트 전용 색상 - 토큰 없음 */
-  const [stepColor, setStepColor] = useState('#714113'); /* 이벤트 전용 색상 - 토큰 없음 */
+  /* ── 디자인 state ── */
+  const [heroImg,    setHeroImg]    = useState(null);
+  const [sectionBg,  setSectionBg]  = useState('#fff4e9'); // 이벤트 전용 – 토큰 없음
+  const [stepColor,  setStepColor]  = useState('#714113'); // 이벤트 전용 – 토큰 없음
+
+  /* ── 텍스트 state ── */
+  const [heroTitle, setHeroTitle] = useState('세상에서 가장 핫한\n핑크룩을 완성하자!');
+  const [tabs, setTabs] = useState(['Event', 'Item']);
+  const [activeTab, setActiveTab] = useState(0);
+
+  const [sectionTitles, setSectionTitles] = useState({
+    participation: '참가 방법',
+    reward: '보상',
+    period: '이벤트 기간',
+    disclaimer: 'Disclaimers',
+  });
+
+  const [steps, setSteps] = useState([
+    { label: 'STEP 1', desc: 'Shop your Iconic Look\nat the Gym Girl Shop' },
+    { label: 'STEP 2', desc: 'Tap the "Join Event" button\non the event page' },
+  ]);
+  const [tips, setTips] = useState([
+    { text: "샵 '핑크파워' 탭에서 아이템 구매 시,\n당첨 확률 2배로 UP!" }
+  ]);
+  const [rewards, setRewards] = useState([
+    { rank: 'TOP 1', rankColor: '#ff3691', name: '100 ZEM' },
+  ]);
+  const [periodText, setPeriodText] = useState('01.30(금) — 02.05(목) [UTC+9]');
+  const [disclaimers, setDisclaimers] = useState([
+    '이벤트 기간 내 참여 이력이 있는 유저 대상입니다.',
+    '당첨자 발표는 이벤트 종료 후 공식 채널을 통해 안내됩니다.',
+    '리워드는 이벤트에 참여한 ZEPETO 계정으로 지급됩니다.',
+    '비정상적인 방법으로 참여한 경우 당첨이 취소될 수 있습니다.',
+    '이벤트 내용은 당사 사정에 따라 변경될 수 있습니다.',
+    '1인 1계정만 참여 가능하며 중복 참여는 허용되지 않습니다.',
+    '리워드 지급 관련 문의는 공식 고객센터를 이용해 주세요.',
+  ]);
+
+  /* ── 패널 state ── */
+  const [activeSection, setActiveSection] = useState(null);
+
   const fileRef = useRef();
 
-  /* step 세로선은 stepColor를 옅게 */
+  /* STEP 세로선: stepColor보다 밝게 */
   const stepLineColor = (() => {
     const { h, s, v } = hexToHsv(stepColor);
     return hsvToHex(h, Math.max(s - 30, 10), Math.min(v + 40, 95));
   })();
 
-  const onFile = e => {
+  const onFile = (e) => {
     const f = e.target.files[0];
     if (f) setHeroImg(URL.createObjectURL(f));
     e.target.value = '';
   };
 
-  return (
-    <div className="builder">
+  /* updaters */
+  const addStep = () =>
+    setSteps(ss => [...ss, { label: `STEP ${ss.length + 1}`, desc: '내용을 입력하세요' }]);
+  const removeStep = (i) =>
+    setSteps(ss => ss.length > 1 ? ss.filter((_, idx) => idx !== i) : ss);
+  const updateStep = (i, field, val) =>
+    setSteps(ss => ss.map((s, idx) => idx === i ? { ...s, [field]: val } : s));
+  const updateTip = (i, val) =>
+    setTips(ts => ts.map((t, idx) => idx === i ? { ...t, text: val } : t));
+  const updateReward = (i, field, val) =>
+    setRewards(rs => rs.map((r, idx) => idx === i ? { ...r, [field]: val } : r));
+  const updateDisclaimer = (i, val) =>
+    setDisclaimers(ds => ds.map((d, idx) => idx === i ? val : d));
+  const updateSectionTitle = (key, val) =>
+    setSectionTitles(t => ({ ...t, [key]: val }));
 
-      {/* ── 왼쪽: 모바일 미리보기 ───────────────────── */}
-      <div className="preview-wrap">
-        <div className="preview-badge">모바일 미리보기 · 375px</div>
-        <div className="phone-frame">
-          <div className="nav-bar"><span className="nav-bar__back">‹ Back</span></div>
+  /* section click-select helpers */
+  const secProps = (name, label) => ({
+    className: `sec-wrap${activeSection === name ? ' is-active' : ''}`,
+    'data-label': label,
+    onClick: (e) => { e.stopPropagation(); setActiveSection(name); },
+  });
 
-          {/* EventHero */}
-          <div className="hero">
-            {heroImg
-              ? <img src={heroImg} alt="hero" />
-              : <div className="hero__empty">
-                  <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                  이미지를 업로드하세요
-                </div>
-            }
-            <div className="hero__title">세상에서 가장 핫한<br/>핑크룩을 완성하자!</div>
-          </div>
+  const inputStyle = {
+    width: '100%', border: '1px solid var(--color-gray-12)',
+    borderRadius: 6, padding: '5px 8px', fontSize: 12,
+    background: 'var(--color-bg-offwhite-01)', outline: 'none',
+    fontFamily: 'var(--font-family-text)', color: 'var(--color-gray-84)',
+  };
 
-          {/* TabSection */}
-          <div className="tabs">
-            {['Event', 'Item'].map((t, i) => (
-              <div key={i} className={`tab ${tab===i?'is-active':''}`} onClick={()=>setTab(i)}>{t}</div>
-            ))}
-          </div>
-
-          {/* ParticipationSection */}
-          <div className="section-wrap">
-            <div className="section-title">참가 방법</div>
-            <div className="section-inner" style={{background: sectionBg}}>
-              <div className="step-list">
-                {STEPS.map((s, i) => (
-                  <div className="step-item" key={i}>
-                    <div className="step-timeline">
-                      <div className="step-bullet" style={{background: stepColor}} />
-                      {i < STEPS.length-1 && <div className="step-line" style={{background: stepLineColor}} />}
-                    </div>
-                    <div className="step-content">
-                      <div className="step-label" style={{color: stepColor}}>{s.label}</div>
-                      <div className="step-desc">{s.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="tip-list">
-                {TIPS.map((tip, i) => (
-                  <div className="tip-item" key={i}>
-                    <span className="tip-tag">TIP!</span>
-                    <span className="tip-text">{tip.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* RewardSection */}
-          <div className="section-wrap">
-            <div className="section-title">리워드</div>
-            <div className="section-inner" style={{background: sectionBg}}>
-              <div className="reward-list">
-                {REWARDS.map((r, i) => (
-                  <div className="reward-item" key={i}>
-                    <div className="reward-rank">{r.rank}</div>
-                    <div className="reward-info">
-                      <div className="reward-name">{r.name}</div>
-                      <div className="reward-sub">{r.sub}</div>
-                    </div>
-                    <div className="reward-img" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* PeriodSection */}
-          <div className="section-wrap">
-            <div className="section-title">이벤트 기간</div>
-            <div className="section-inner" style={{background: sectionBg}}>
-              <div className="period-list">
-                {PERIODS.map((p, i) => (
-                  <div className="period-item" key={i}>
-                    <span className="period-label">{p.label}</span>
-                    <span className="period-value">{p.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* DisclaimerSection */}
-          <div className="disclaimer">
-            <div className="disclaimer__title">Disclaimers</div>
-            <div className="disclaimer__list">
-              {DISCLAIMERS.map((d, i) => (
-                <div className="disclaimer__item" key={i}>
-                  <span className="disclaimer__bullet">•</span>
-                  <span className="disclaimer__text">{d}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+  /* ── 패널 컨트롤 렌더 ── */
+  const renderPanelContent = () => {
+    if (!activeSection) return (
+      <div className="panel__empty">
+        <div className="panel__empty-icon">✦</div>
+        <div>미리보기의 섹션을<br/>클릭하면 편집 옵션이<br/>여기에 표시됩니다</div>
       </div>
+    );
 
-      {/* ── 오른쪽: 컨트롤 패널 ─────────────────────── */}
-      <div className="panel">
-        <div className="panel__header">편집 패널</div>
-
-        <CtrlCard label="EventHero" badge="배경 이미지">
+    if (activeSection === 'hero') return (
+      <>
+        <div className="panel__section-label">EventHero</div>
+        <CtrlCard label="배경 이미지">
           <div>
-            <div className="ctrl-group__label">배경 이미지</div>
+            <div className="ctrl-group__label">Hero Image</div>
             <div className="upload-zone" onClick={() => fileRef.current.click()}>
               {heroImg
                 ? <img className="upload-zone__thumb" src={heroImg} alt="preview" />
                 : <>
-                    <svg width="24" height="24" fill="none" stroke="#C7C7C9" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <svg width="22" height="22" fill="none" stroke="#C7C7C9" strokeWidth="1.5" viewBox="0 0 24 24">
                       <rect x="3" y="3" width="18" height="18" rx="2"/>
                       <circle cx="8.5" cy="8.5" r="1.5"/>
                       <polyline points="21 15 16 10 5 21"/>
@@ -512,41 +692,330 @@ function App() {
               }
               <input ref={fileRef} type="file" accept="image/*" onChange={onFile} />
             </div>
-            {heroImg && <span className="upload-reset" onClick={()=>setHeroImg(null)}>이미지 제거</span>}
+            {heroImg && <span className="upload-reset" onClick={() => setHeroImg(null)}>이미지 제거</span>}
           </div>
         </CtrlCard>
+        <CtrlCard label="타이틀 텍스트" defaultOpen={false}>
+          <div className="ctrl-info">미리보기의 텍스트를<br/>직접 클릭해서 편집하세요</div>
+        </CtrlCard>
+      </>
+    );
 
-        <CtrlCard label="ParticipationSection" badge="배경색 · STEP 컬러">
+    if (activeSection === 'tabs') return (
+      <>
+        <div className="panel__section-label">TabSection</div>
+        <CtrlCard label="탭 레이블">
+          {tabs.map((t, i) => (
+            <div key={i}>
+              <div className="ctrl-group__label">Tab {i + 1}</div>
+              <input style={inputStyle} value={t}
+                onChange={e => setTabs(ts => ts.map((x, idx) => idx === i ? e.target.value : x))} />
+            </div>
+          ))}
+        </CtrlCard>
+      </>
+    );
+
+    if (activeSection === 'participation') return (
+      <>
+        <div className="panel__section-label">Participation</div>
+        <CtrlCard label="스텝 목록">
+          {steps.map((s, i) => (
+            <div className="step-row" key={i}>
+              <div className="step-row__inputs">
+                <div className="step-row__num">Step {i + 1}</div>
+                <input
+                  className="step-panel-input"
+                  value={s.label}
+                  onChange={e => updateStep(i, 'label', e.target.value)}
+                  placeholder="레이블 (예: STEP 1)"
+                />
+                <textarea
+                  className="step-panel-input"
+                  rows={2}
+                  value={s.desc}
+                  onChange={e => updateStep(i, 'desc', e.target.value)}
+                  placeholder="설명을 입력하세요"
+                />
+              </div>
+              <button className="step-row__minus" onClick={() => removeStep(i)} title="삭제">−</button>
+            </div>
+          ))}
+          <div className="step-panel-add" onClick={addStep}>
+            <span>＋</span> 스텝 추가
+          </div>
+        </CtrlCard>
+        <CtrlCard label="Event Card BG" badge="공유">
           <div>
-            <div className="ctrl-group__label">섹션 배경 컬러</div>
+            <div className="ctrl-group__label">카드 배경 컬러</div>
             <ColorPicker hex={sectionBg} onChange={setSectionBg} />
           </div>
+        </CtrlCard>
+        <CtrlCard label="STEP 컬러">
           <div>
-            <div className="ctrl-group__label">STEP 컬러</div>
+            <div className="ctrl-group__label">STEP 번호 & 불릿 컬러</div>
             <ColorPicker hex={stepColor} onChange={setStepColor} />
           </div>
         </CtrlCard>
+      </>
+    );
 
-        <CtrlCard label="RewardSection" badge="배경색 공유">
+    if (activeSection === 'reward') return (
+      <>
+        <div className="panel__section-label">RewardSection</div>
+        <CtrlCard label="Event Card BG" badge="공유">
           <div>
-            <div className="ctrl-group__label">섹션 배경 컬러 (공유)</div>
+            <div className="ctrl-group__label">카드 배경 컬러</div>
             <ColorPicker hex={sectionBg} onChange={setSectionBg} />
           </div>
         </CtrlCard>
-
-        <CtrlCard label="PeriodSection" badge="배경색 공유" defaultOpen={false}>
+        <CtrlCard label="TOP 1 순위 컬러" defaultOpen={false}>
           <div>
-            <div className="ctrl-group__label">섹션 배경 컬러 (공유)</div>
+            <div className="ctrl-group__label">TOP 1 컬러</div>
+            <ColorPicker hex={rewards[0]?.rankColor || '#ff3691'} onChange={v => updateReward(0, 'rankColor', v)} />
+          </div>
+        </CtrlCard>
+      </>
+    );
+
+    if (activeSection === 'period') return (
+      <>
+        <div className="panel__section-label">PeriodSection</div>
+        <CtrlCard label="Event Card BG" badge="공유">
+          <div>
+            <div className="ctrl-group__label">카드 배경 컬러</div>
             <ColorPicker hex={sectionBg} onChange={setSectionBg} />
           </div>
         </CtrlCard>
+        <CtrlCard label="기간 텍스트" defaultOpen={false}>
+          <div className="ctrl-info">미리보기의 날짜 텍스트를<br/>직접 클릭해서 편집하세요</div>
+        </CtrlCard>
+      </>
+    );
 
-        <CtrlCard label="DisclaimerSection" badge="고정" defaultOpen={false}>
-          <div style={{fontSize:'12px', color:'var(--color-gray-40)', lineHeight:'1.6'}}>
-            배경색은 디자인 시스템 토큰<br/>
-            <code style={{fontFamily:'monospace', fontSize:'11px'}}>--color-bg-offwhite-01</code>로 고정됩니다.
+    if (activeSection === 'disclaimer') return (
+      <>
+        <div className="panel__section-label">Disclaimer</div>
+        <CtrlCard label="DisclaimerSection" badge="고정">
+          <div className="ctrl-info">
+            배경색은 토큰 <code style={{fontFamily:'monospace', fontSize:11}}>--color-bg-offwhite-01</code> 로 고정됩니다.<br/><br/>
+            텍스트는 미리보기에서<br/>직접 클릭해 편집하세요.
           </div>
         </CtrlCard>
+      </>
+    );
+
+    return null;
+  };
+
+  return (
+    <div className="builder">
+
+      {/* ── 모바일 미리보기 ─────────────────────────────── */}
+      <div className="preview-wrap">
+        <div className="preview-badge">Mobile Preview · 375px</div>
+        <div className="phone-frame">
+
+          {/* NavBar – 고정, 편집 불필요 */}
+          <div className="nav-bar">
+            <span className="nav-bar__back">‹ Back</span>
+          </div>
+
+          {/* EventHero */}
+          <div {...secProps('hero', 'Hero')}>
+            <div className="hero">
+              {heroImg
+                ? <img src={heroImg} alt="hero" />
+                : <div className="hero__empty">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    이미지를 업로드하세요
+                  </div>
+              }
+              <EditableText
+                tag="div"
+                className="hero__title"
+                value={heroTitle}
+                onChange={setHeroTitle}
+              />
+            </div>
+          </div>
+
+          {/* TabSection */}
+          <div {...secProps('tabs', 'Tabs')}>
+            <div className="tabs">
+              {tabs.map((t, i) => (
+                <div key={i} className={`tab ${activeTab===i?'is-active':''}`} onClick={()=>setActiveTab(i)}>
+                  {t}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ParticipationSection */}
+          <div {...secProps('participation', 'Participation')}>
+            <div className="section-wrap">
+              <EditableText
+                tag="span"
+                className="section-title"
+                value={sectionTitles.participation}
+                onChange={v => updateSectionTitle('participation', v)}
+              />
+              <div className="section-inner" style={{background: sectionBg}}>
+                <div className="step-list">
+                  {steps.map((s, i) => (
+                    <div className="step-item" key={i}>
+                      <div className="step-timeline">
+                        <div className="step-bullet" style={{background: stepColor}} />
+                        {i < steps.length - 1 && <div className="step-line" style={{background: stepLineColor}} />}
+                      </div>
+                      <div className="step-content">
+                        <EditableText
+                          tag="span"
+                          className="step-label"
+                          style={{color: stepColor}}
+                          value={s.label}
+                          onChange={v => updateStep(i, 'label', v)}
+                        />
+                        <EditableText
+                          tag="span"
+                          className="step-desc"
+                          value={s.desc}
+                          onChange={v => updateStep(i, 'desc', v)}
+                        />
+                      </div>
+                      <button
+                        className="step-remove-btn"
+                        onClick={e => { e.stopPropagation(); removeStep(i); }}
+                        title="항목 삭제"
+                      >−</button>
+                    </div>
+                  ))}
+                </div>
+                <div className="step-add-btn" onClick={e => { e.stopPropagation(); addStep(); }}>
+                  <span className="step-add-icon">+</span>
+                  스텝 추가
+                </div>
+                <div className="tip-list">
+                  {tips.map((tip, i) => (
+                    <div className="tip-item" key={i}>
+                      <span className="tip-tag">TIP!</span>
+                      <EditableText
+                        tag="span"
+                        className="tip-text"
+                        value={tip.text}
+                        onChange={v => updateTip(i, v)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RewardSection */}
+          <div {...secProps('reward', 'Reward')}>
+            <div className="section-wrap">
+              <EditableText
+                tag="span"
+                className="section-title"
+                value={sectionTitles.reward}
+                onChange={v => updateSectionTitle('reward', v)}
+              />
+              <div className="section-inner" style={{background: sectionBg, paddingTop: 0, paddingBottom: 0}}>
+                <div className="reward-list">
+                  {rewards.map((r, i) => (
+                    <div className="reward-item" key={i}>
+                      <div className="reward-text">
+                        <EditableText
+                          tag="span"
+                          className="reward-rank"
+                          style={{color: r.rankColor || 'var(--color-gray-84)'}}
+                          value={r.rank}
+                          onChange={v => updateReward(i, 'rank', v)}
+                        />
+                        <EditableText
+                          tag="span"
+                          className="reward-name"
+                          value={r.name}
+                          onChange={v => updateReward(i, 'name', v)}
+                        />
+                      </div>
+                      <div className="reward-img">🎁</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* PeriodSection */}
+          <div {...secProps('period', 'Period')}>
+            <div className="section-wrap">
+              <EditableText
+                tag="span"
+                className="section-title"
+                value={sectionTitles.period}
+                onChange={v => updateSectionTitle('period', v)}
+              />
+              <div className="section-inner" style={{background: sectionBg, paddingTop: 24, paddingBottom: 24}}>
+                <EditableText
+                  tag="span"
+                  className="period-text"
+                  value={periodText}
+                  onChange={setPeriodText}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* DisclaimerSection */}
+          <div {...secProps('disclaimer', 'Disclaimer')}>
+            <div className="disclaimer">
+              <EditableText
+                tag="span"
+                className="disclaimer__title"
+                value={sectionTitles.disclaimer}
+                onChange={v => updateSectionTitle('disclaimer', v)}
+              />
+              <div className="disclaimer__list">
+                {disclaimers.map((d, i) => (
+                  <div className="disclaimer__item" key={i}>
+                    <span className="disclaimer__bullet">•</span>
+                    <EditableText
+                      tag="span"
+                      className="disclaimer__text"
+                      value={d}
+                      onChange={v => updateDisclaimer(i, v)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── Fixed 편집 패널 ──────────────────────────── */}
+      <div className="panel">
+        {/* 탭 바 */}
+        <div className="panel-tabs">
+          {PANEL_TABS.map(t => (
+            <div
+              key={t.key}
+              className={`panel-tab${activeSection === t.key ? ' is-active' : ''}`}
+              onClick={() => setActiveSection(t.key)}
+            >{t.label}</div>
+          ))}
+        </div>
+        {/* 탭 콘텐츠 */}
+        <div className="panel-body">
+          {renderTabContent()}
+        </div>
       </div>
 
     </div>
