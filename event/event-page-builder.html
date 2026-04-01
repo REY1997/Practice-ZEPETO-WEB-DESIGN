@@ -27,19 +27,20 @@
       --font-family-text    : "SF Pro Text",    -apple-system, BlinkMacSystemFont, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-family-text); background: #DDDDE0; min-height: 100vh; }
+    body { font-family: var(--font-family-text); background: #222222; min-height: 100vh; }
 
     /* ── Layout ──────────────────────────────────────── */
     .builder {
       display: flex;
       padding: 32px;
-      padding-right: calc(280px + 32px);
+      padding-left: calc(200px + 32px);
+      padding-right: calc(240px + 32px);
       align-items: flex-start;
       min-height: 100vh;
       justify-content: center;
     }
 
-    /* ── Preview (왼쪽) ──────────────────────────────── */
+    /* ── Preview ─────────────────────────────────────── */
     .preview-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
     .preview-badge {
       font-size: 11px; font-weight: 600; color: var(--color-gray-54);
@@ -51,81 +52,377 @@
       box-shadow: 0 12px 60px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    /* ── Fixed Panel (오른쪽) ────────────────────────── */
-    .panel {
-      position: fixed;
-      right: 0; top: 0;
-      width: 280px;
-      height: 100vh;
-      overflow-y: auto;
-      background: #E6E6E9;
-      border-left: 1px solid rgba(0,0,0,0.07);
-      padding: 28px 16px 48px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    /* ── Left Panel (Row style) ──────────────────────── */
+    .tpl-panel {
+      position: fixed; left: 0; top: 0;
+      width: 200px; height: 100vh;
+      background: var(--color-white-100);
+      border-right: 1px solid var(--color-gray-12);
+      display: flex; flex-direction: column;
       z-index: 200;
     }
-    .panel__header {
-      font-family: var(--font-family-display);
+    .tpl-panel__header {
       font-size: 11px; font-weight: 700; color: var(--color-gray-54);
       text-transform: uppercase; letter-spacing: 0.08em;
-      padding: 0 4px 10px;
+      padding: 14px 16px 13px;
+      border-bottom: 1px solid var(--color-gray-12);
+      flex-shrink: 0;
+    }
+    .tpl-scroll { flex: 1; overflow-y: auto; }
+    .tpl-section-label {
+      font-size: 10px; font-weight: 700; color: var(--color-gray-40);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 12px 16px 5px;
+    }
+    .tpl-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px 8px 16px;
+      cursor: pointer;
+      transition: background 0.1s;
+      position: relative; user-select: none;
+    }
+    .tpl-row:hover { background: var(--color-bg-offwhite-01); }
+    .tpl-row.is-active { background: rgba(92,70,255,0.06); }
+    .tpl-row.is-active::before {
+      content: '';
+      position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 3px; background: var(--color-primary); border-radius: 0 3px 3px 0;
+    }
+    .tpl-row__swatch {
+      width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .tpl-row__name { flex: 1; font-size: 13px; font-weight: 500; color: var(--color-gray-84); }
+    .tpl-row.is-active .tpl-row__name { color: var(--color-primary); font-weight: 600; }
+    .tpl-row__badge {
+      font-size: 9px; font-weight: 600; color: var(--color-gray-40);
+      background: var(--color-gray-06); padding: 1px 5px; border-radius: 10px;
+    }
+    .tpl-row__chevron { font-size: 14px; color: var(--color-gray-22); line-height: 1; }
+    .tpl-row.is-active .tpl-row__chevron { color: var(--color-primary); }
+    .tpl-divider { height: 1px; background: var(--color-gray-12); margin: 6px 0; }
+
+    /* ── Left Panel Tab Switcher ─────────────────────── */
+    .tpl-tabs {
+      display: flex; flex-shrink: 0;
+      border-bottom: 1px solid var(--color-gray-12);
+    }
+    .tpl-tab-btn {
+      flex: 1; padding: 10px 6px 9px; border: none; background: transparent;
+      font-size: 12px; font-weight: 600; color: var(--color-gray-40);
+      cursor: pointer; font-family: var(--font-family-text);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.12s, border-color 0.12s;
+    }
+    .tpl-tab-btn:hover { color: var(--color-gray-84); }
+    .tpl-tab-btn.is-active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+
+    /* ── Insert Section Rows ─────────────────────────── */
+    .ins-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px 8px 16px;
+      cursor: pointer; transition: background 0.1s;
+      position: relative; user-select: none;
+    }
+    .ins-row:hover { background: var(--color-bg-offwhite-01); }
+    .ins-row.is-open { background: rgba(92,70,255,0.06); }
+    .ins-row.is-open::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 3px; background: var(--color-primary); border-radius: 0 3px 3px 0;
+    }
+    .ins-row__icon {
+      width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .ins-row__name { flex: 1; font-size: 13px; font-weight: 500; color: var(--color-gray-84); }
+    .ins-row.is-open .ins-row__name { color: var(--color-primary); font-weight: 600; }
+    .ins-row__arrow {
+      font-size: 11px; color: var(--color-gray-22);
+      transition: transform 0.15s; display: inline-block;
+    }
+    .ins-row.is-open .ins-row__arrow { color: var(--color-primary); transform: rotate(90deg); }
+
+    /* ── Insert Sub-Panel (Flyout) ───────────────────── */
+    .ins-subpanel {
+      position: fixed; left: 200px; top: 0;
+      width: 236px; height: 100vh;
+      background: var(--color-white-100);
+      border-right: 1px solid var(--color-gray-12);
+      display: flex; flex-direction: column;
+      z-index: 199;
+      box-shadow: 6px 0 20px rgba(0,0,0,0.08);
+      animation: subSlideIn 0.18s ease;
+    }
+    @keyframes subSlideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .ins-subpanel__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 14px 12px 16px;
+      border-bottom: 1px solid var(--color-gray-12);
+      flex-shrink: 0;
+    }
+    .ins-subpanel__title {
+      font-size: 13px; font-weight: 700; color: var(--color-gray-84);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .ins-subpanel__close {
+      width: 22px; height: 22px; border-radius: 5px; border: none;
+      background: var(--color-bg-offwhite-01); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: var(--color-gray-54);
+      font-family: var(--font-family-text);
+      transition: background 0.1s; flex-shrink: 0;
+    }
+    .ins-subpanel__close:hover { background: var(--color-gray-12); }
+    .ins-subpanel__scroll {
+      flex: 1; overflow-y: auto;
+      padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+
+    /* ── Variant Cards ───────────────────────────────── */
+    .var-card {
+      border: 1.5px solid var(--color-gray-12); border-radius: 10px;
+      overflow: hidden; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: var(--color-bg-offwhite-01);
+    }
+    .var-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 10px rgba(92,70,255,0.14); }
+    .var-card.is-soon { cursor: default; opacity: 0.5; }
+    .var-card.is-soon:hover { border-color: var(--color-gray-12); box-shadow: none; }
+    .var-card__thumb {
+      width: 100%; height: 90px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-white-100);
+    }
+    .var-card__footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 10px; border-top: 1px solid var(--color-gray-12);
+    }
+    .var-card__name { font-size: 11px; font-weight: 600; color: var(--color-gray-84); }
+    .var-card__badge {
+      font-size: 9px; font-weight: 700;
+      background: var(--color-primary); color: #fff;
+      padding: 2px 6px; border-radius: 10px;
+    }
+    .var-card__badge--soon { background: var(--color-gray-12); color: var(--color-gray-40); }
+
+    /* ── Drop Zones ──────────────────────────────────── */
+    .drop-zone {
+      height: 0; position: relative; z-index: 10;
+      transition: height 0.14s, background 0.14s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .drop-zone.is-active { height: 44px; }
+    .drop-zone.is-over {
+      background: rgba(92,70,255,0.09);
+      border-top: 2px dashed var(--color-primary);
+      border-bottom: 2px dashed var(--color-primary);
+      margin: 2px 0;
+    }
+    .drop-zone__label {
+      font-size: 11px; font-weight: 700; color: var(--color-primary);
+      pointer-events: none; opacity: 0; transition: opacity 0.12s;
+    }
+    .drop-zone.is-over .drop-zone__label { opacity: 1; }
+
+    /* ── Drag Ghost ──────────────────────────────────── */
+    .drag-ghost {
+      position: fixed; left: -9999px; top: 0; z-index: 9999;
+      background: var(--color-white-100);
+      border-radius: 10px; border: 1.5px solid var(--color-primary);
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.22);
+      pointer-events: none; white-space: nowrap;
+      font-family: var(--font-family-text);
+      font-size: 13px; font-weight: 600; color: var(--color-gray-84);
+    }
+    .drag-ghost__icon { font-size: 20px; line-height: 1; }
+
+    /* ── Panel delete btn ────────────────────────────── */
+    .panel-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px 10px;
+      border-bottom: 1px solid var(--color-gray-12);
+      flex-shrink: 0;
+    }
+    .panel-hdr__label {
+      font-size: 10px; font-weight: 700; color: var(--color-gray-40);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .panel-hdr__del {
+      width: 24px; height: 24px; border: none; background: transparent;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      border-radius: 5px; color: var(--color-gray-40);
+      transition: color 0.12s, background 0.12s; font-family: inherit;
+    }
+    .panel-hdr__del:hover { color: #ff3b30; background: rgba(255,59,48,0.09); }
+
+    /* ── Canvas toolbar (Reset btn) ─────────────────── */
+    .canvas-toolbar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .canvas-reset-btn {
+      padding: 4px 12px; border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.7);
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-family-text);
+      display: flex; align-items: center; gap: 5px;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .canvas-reset-btn:hover { background: rgba(255,255,255,0.18); color: #fff; border-color: rgba(255,255,255,0.35); }
+
+    /* ── Bottom Actions ──────────────────────────────── */
+    .tpl-actions {
+      padding: 12px;
+      border-top: 1px solid var(--color-gray-12);
+      display: flex; flex-direction: column; gap: 8px;
+      flex-shrink: 0;
+    }
+    .tpl-deploy-btn {
+      padding: 10px 12px; border-radius: 9px;
+      background: var(--color-primary); color: var(--color-white-100);
+      border: none; cursor: pointer;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      font-family: var(--font-family-text);
+      transition: opacity 0.12s, transform 0.1s;
+    }
+    .tpl-deploy-btn:hover { opacity: 0.88; }
+    .tpl-deploy-btn:active { transform: scale(0.98); }
+    .tpl-export-btn {
+      padding: 8px 12px; border-radius: 8px;
+      border: 1.5px solid var(--color-gray-12);
+      background: transparent; cursor: pointer;
+      font-size: 12px; font-weight: 500; color: var(--color-gray-54);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: var(--font-family-text);
+      transition: border-color 0.12s, color 0.12s;
+    }
+    .tpl-export-btn:hover { border-color: var(--color-gray-54); color: var(--color-gray-84); }
+
+    /* ── Modals ──────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500;
+    }
+    .modal {
+      background: var(--color-white-100); border-radius: 16px;
+      width: 420px; max-width: calc(100vw - 48px);
+      padding: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .modal__title { font-size: 16px; font-weight: 700; color: var(--color-gray-84); margin-bottom: 6px; }
+    .modal__desc { font-size: 13px; color: var(--color-gray-54); line-height: 1.6; margin-bottom: 16px; }
+    .modal__steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .modal__step {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; border-radius: 10px;
+      background: var(--color-bg-offwhite-01);
+      border: 1px solid var(--color-gray-12);
+    }
+    .modal__step-num {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      background: var(--color-primary); color: #fff;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal__step-text { font-size: 13px; color: var(--color-gray-84); line-height: 1.5; }
+    .modal__step-text strong { font-weight: 700; }
+    .modal__netlify {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 9px;
+      background: #00ad9f; color: #fff;
+      font-size: 13px; font-weight: 700; text-decoration: none;
+      margin-bottom: 16px; cursor: pointer; border: none;
+      font-family: var(--font-family-text);
+      transition: opacity 0.12s;
+    }
+    .modal__netlify:hover { opacity: 0.88; }
+    .modal__code {
+      background: var(--color-bg-offwhite-01); border-radius: 8px;
+      padding: 12px; font-family: monospace; font-size: 11px;
+      color: var(--color-gray-64); line-height: 1.6;
+      margin-bottom: 16px; white-space: pre-wrap;
+      max-height: 200px; overflow-y: auto;
+      border: 1px solid var(--color-gray-12);
+    }
+    .modal__actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .modal__btn {
+      padding: 8px 18px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none;
+      font-family: var(--font-family-text);
+    }
+    .modal__btn--primary { background: var(--color-primary); color: var(--color-white-100); }
+    .modal__btn--secondary { background: var(--color-bg-offwhite-01); color: var(--color-gray-84); }
+    .modal__spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Fixed Right Panel ───────────────────────────── */
+    .panel {
+      position: fixed; right: 0; top: 0;
+      width: 240px; height: 100vh;
+      overflow-y: auto;
+      background: var(--color-white-100);
+      border-left: 1px solid var(--color-gray-12);
+      display: flex; flex-direction: column;
+      z-index: 200;
     }
     .panel__empty {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 10px;
-      text-align: center; padding: 40px 16px;
-      color: var(--color-gray-40); font-size: 13px; line-height: 1.6;
+      text-align: center; padding: 48px 16px;
+      color: var(--color-gray-40); font-size: 12px; line-height: 1.7;
       flex: 1;
     }
     .panel__empty-icon {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: rgba(0,0,0,0.06);
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-bg-offwhite-01);
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
+      font-size: 16px; color: var(--color-gray-40);
     }
     .panel__section-label {
-      font-size: 10px; font-weight: 700; color: var(--color-primary);
-      text-transform: uppercase; letter-spacing: 0.1em;
-      padding: 2px 4px 10px; opacity: 0.8;
+      font-size: 10px; font-weight: 700; color: var(--color-gray-40);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--color-gray-12);
     }
 
-    /* ── 컨트롤 카드 ─────────────────────────────────── */
-    .ctrl-card { background: var(--color-white-100); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+    /* ── CtrlCard ────────────────────────────────────── */
+    .ctrl-card { border-bottom: 1px solid var(--color-gray-12); }
+    .ctrl-card:last-child { border-bottom: none; }
     .ctrl-card__head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 16px; cursor: pointer; user-select: none;
+      padding: 10px 16px; cursor: pointer; user-select: none;
     }
-    .ctrl-card__head:hover { background: #fafafa; }
-    .ctrl-card__label { font-size: 13px; font-weight: 700; color: var(--color-gray-84); }
+    .ctrl-card__head:hover { background: var(--color-bg-offwhite-01); }
+    .ctrl-card__label { font-size: 12px; font-weight: 600; color: var(--color-gray-84); }
     .ctrl-card__badge { font-size: 10px; color: var(--color-gray-40); font-weight: 500; margin-left: 4px; }
-    .ctrl-card__chevron { color: var(--color-gray-40); font-size: 10px; transition: transform 0.18s; }
+    .ctrl-card__chevron { color: var(--color-gray-22); font-size: 9px; transition: transform 0.18s; }
     .ctrl-card__chevron.open { transform: rotate(180deg); }
-    .ctrl-card__body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 14px; }
-    .ctrl-card__divider { height: 1px; background: var(--color-gray-12); margin: 0 16px; }
-
+    .ctrl-card__body { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 14px; }
     .ctrl-group__label {
-      font-size: 11px; font-weight: 600; color: var(--color-gray-54);
-      margin-bottom: 8px; letter-spacing: 0.03em;
+      font-size: 10px; font-weight: 600; color: var(--color-gray-40);
+      margin-bottom: 7px; letter-spacing: 0.04em; text-transform: uppercase;
     }
-    .ctrl-info {
-      font-size: 12px; color: var(--color-gray-40); line-height: 1.6;
-    }
+    .ctrl-info { font-size: 11px; color: var(--color-gray-40); line-height: 1.7; }
 
-    /* ── 스텝 패널 에디터 ────────────────────────────── */
-    .step-row {
-      display: flex; align-items: flex-start; gap: 8px;
-    }
+    /* ── List Editor (steps/tips/tabs/rewards) ───────── */
+    .step-row { display: flex; align-items: flex-start; gap: 8px; }
     .step-row__inputs { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .step-row__num {
-      font-size: 11px; font-weight: 700; color: var(--color-gray-54);
-      margin-bottom: 4px;
-    }
+    .step-row__num { font-size: 11px; font-weight: 700; color: var(--color-gray-54); margin-bottom: 4px; }
     .step-row__minus {
       width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
-      border: 1.5px solid var(--color-gray-12);
-      background: var(--color-white-100);
+      border: 1.5px solid var(--color-gray-12); background: var(--color-white-100);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       font-size: 13px; color: var(--color-gray-54); line-height: 1;
       transition: border-color 0.12s, color 0.12s;
@@ -149,16 +446,25 @@
     }
     .step-panel-add:hover { border-color: var(--color-primary); color: var(--color-primary); }
 
-    /* ── 이미지 업로드 ───────────────────────────────── */
+    /* ── Upload zones ────────────────────────────────── */
     .upload-zone {
       border: 1.5px dashed var(--color-gray-12); border-radius: 10px;
       padding: 14px; text-align: center; cursor: pointer; transition: border-color 0.15s;
     }
     .upload-zone:hover { border-color: var(--color-primary); }
-    .upload-zone__thumb { width: 100%; height: 60px; object-fit: cover; border-radius: 6px; }
-    .upload-zone__hint { font-size: 11px; color: var(--color-gray-40); margin-top: 6px; line-height: 1.5; }
+    .upload-zone__thumb { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; display: block; }
+    .upload-zone__hint { font-size: 11px; color: var(--color-gray-40); margin-top: 6px; line-height: 1.6; }
     .upload-zone input[type=file] { display: none; }
     .upload-reset { display: inline-block; margin-top: 7px; font-size: 11px; color: var(--color-primary); cursor: pointer; text-decoration: underline; }
+    .reward-panel-img {
+      width: 100%; height: 52px;
+      border: 1.5px dashed var(--color-gray-12); border-radius: 6px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s; overflow: hidden; text-align: center;
+    }
+    .reward-panel-img:hover { border-color: var(--color-primary); }
+    .reward-panel-img__hint { font-size: 10px; color: var(--color-gray-40); line-height: 1.5; }
+    .reward-panel-img img { width: 100%; height: 100%; object-fit: cover; }
 
     /* ── Color Picker ─────────────────────────────────── */
     .cp { display: flex; flex-direction: column; gap: 10px; }
@@ -172,29 +478,19 @@
       position: absolute; width: 12px; height: 12px;
       border-radius: 50%; border: 2px solid #fff;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.3);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
+      transform: translate(-50%, -50%); pointer-events: none;
     }
     .cp-hue-wrap { position: relative; height: 12px; border-radius: 6px; overflow: hidden; }
     .cp-hue-track {
       position: absolute; inset: 0;
-      background: linear-gradient(to right,
-        hsl(0,100%,50%), hsl(30,100%,50%), hsl(60,100%,50%), hsl(90,100%,50%),
-        hsl(120,100%,50%), hsl(150,100%,50%), hsl(180,100%,50%), hsl(210,100%,50%),
-        hsl(240,100%,50%), hsl(270,100%,50%), hsl(300,100%,50%), hsl(330,100%,50%), hsl(360,100%,50%));
+      background: linear-gradient(to right, hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%));
     }
-    .cp-hue-input {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      opacity: 0; cursor: pointer; margin: 0;
-      -webkit-appearance: none; appearance: none;
-    }
+    .cp-hue-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0; -webkit-appearance: none; appearance: none; }
     .cp-hue-thumb-overlay {
-      position: absolute; top: -1px;
-      width: 14px; height: 14px;
+      position: absolute; top: -1px; width: 14px; height: 14px;
       border-radius: 50%; border: 2px solid #fff;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.25);
-      transform: translateX(-50%);
-      pointer-events: none;
+      transform: translateX(-50%); pointer-events: none;
     }
     .cp-bottom { display: flex; align-items: center; gap: 8px; }
     .cp-preview { width: 26px; height: 26px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; }
@@ -210,209 +506,70 @@
       text-transform: uppercase; letter-spacing: 0.04em;
     }
 
-    /* ── 섹션 클릭 선택 래퍼 ────────────────────────── */
+    /* ── Section select wrapper ──────────────────────── */
     .sec-wrap {
-      position: relative;
-      outline: 2px solid transparent;
-      outline-offset: -2px;
-      transition: outline-color 0.12s;
-      cursor: pointer;
+      position: relative; outline: 2px solid transparent;
+      outline-offset: -2px; transition: outline-color 0.12s; cursor: pointer;
     }
-    .sec-wrap:hover { outline-color: rgba(92, 70, 255, 0.25); }
-    .sec-wrap.is-active {
-      outline-color: var(--color-primary);
-      z-index: 1;
-      cursor: default;
-    }
+    .sec-wrap:hover { outline-color: rgba(92,70,255,0.25); }
+    .sec-wrap.is-active { outline-color: var(--color-primary); z-index: 1; cursor: default; }
     .sec-wrap.is-active::after {
-      content: attr(data-label);
-      position: absolute;
-      top: 0; left: 0;
-      font-size: 9px; font-weight: 700;
-      color: var(--color-white-100);
-      background: var(--color-primary);
-      padding: 2px 7px 2px 6px;
-      border-radius: 0 0 6px 0;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      pointer-events: none;
-      z-index: 10;
+      content: attr(data-label); position: absolute; top: 0; left: 0;
+      font-size: 9px; font-weight: 700; color: var(--color-white-100);
+      background: var(--color-primary); padding: 2px 7px 2px 6px;
+      border-radius: 0 0 6px 0; letter-spacing: 0.05em; text-transform: uppercase;
+      pointer-events: none; z-index: 10;
     }
 
-    /* ── Editable text ───────────────────────────────── */
+    /* ── Editable ────────────────────────────────────── */
     [contenteditable] { outline: none; cursor: text; }
     [contenteditable]:hover { background: rgba(92,70,255,0.05); border-radius: 3px; }
-    [contenteditable]:focus {
-      background: rgba(92,70,255,0.08);
-      outline: 1px solid rgba(92,70,255,0.35);
-      border-radius: 3px;
-    }
+    [contenteditable]:focus { background: rgba(92,70,255,0.08); outline: 1px solid rgba(92,70,255,0.35); border-radius: 3px; }
 
-    /* ── Nav ─────────────────────────────────────────── */
-    .nav-bar {
-      height: 52px; display: flex; align-items: center; padding: 0 20px;
-      background: var(--color-white-100);
-      border-bottom: 1px solid var(--color-gray-12);
-    }
+    /* ── Event page sections ─────────────────────────── */
+    .nav-bar { height: 52px; display: flex; align-items: center; padding: 0 20px; background: var(--color-white-100); border-bottom: 1px solid var(--color-gray-12); }
     .nav-bar__back { font-size: 17px; color: var(--color-primary); }
-
-    /* ── Hero ────────────────────────────────────────── */
     .hero { width: 375px; height: 248px; position: relative; overflow: hidden; background: var(--color-gray-84); }
     .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero__empty {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(145deg, #292930 0%, #47474D 100%);
-      color: rgba(255,255,255,0.25); font-size: 12px; gap: 8px;
-    }
-    .hero__title {
-      position: absolute; bottom: 16px; left: 20px; right: 20px;
-      color: var(--color-white-100);
-      font-family: var(--font-family-display);
-      font-size: 23px; font-weight: 700; line-height: 1.4;
-      text-shadow: 0px 0px 6.25px rgba(0,0,0,0.3);
-      white-space: pre-wrap;
-    }
+    .hero__empty { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(145deg,#292930,#47474D); color: rgba(255,255,255,0.25); font-size: 12px; gap: 8px; }
+    .hero__title { position: absolute; bottom: 16px; left: 20px; right: 20px; color: #fff; font-family: var(--font-family-display); font-size: 23px; font-weight: 700; line-height: 1.4; text-shadow: 0 0 6px rgba(0,0,0,0.3); white-space: pre-wrap; }
     .hero__title:hover { background: rgba(255,255,255,0.1); border-radius: 3px; }
     .hero__title:focus { background: rgba(255,255,255,0.15); outline: 1px solid rgba(255,255,255,0.5); border-radius: 3px; }
-
-    /* ── Tabs ────────────────────────────────────────── */
-    .tabs {
-      display: flex; padding: 0 20px;
-      background: var(--color-white-100);
-      border-bottom: 1px solid var(--color-gray-12);
-    }
-    .tab {
-      padding: 12px 16px 10px;
-      font-family: var(--font-family-text);
-      font-size: 15px; color: var(--color-gray-40);
-      font-weight: 500; border-bottom: 2px solid transparent;
-      cursor: pointer; user-select: none;
-    }
+    .tabs { display: flex; padding: 0 20px; background: var(--color-white-100); border-bottom: 1px solid var(--color-gray-12); overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex-shrink: 0; }
+    .tab { padding: 12px 16px 10px; font-size: 15px; color: var(--color-gray-40); font-weight: 500; border-bottom: 2px solid transparent; cursor: pointer; user-select: none; }
     .tab.is-active { color: var(--color-gray-84); font-weight: 700; border-bottom-color: var(--color-gray-84); }
-
-    /* ── Section common ──────────────────────────────── */
     .section-wrap { background: var(--color-white-100); padding: 0 16px 24px; }
-    .section-title {
-      font-family: var(--font-family-display);
-      font-size: 20px; font-weight: 700; color: var(--color-gray-84);
-      line-height: 28px; padding: 24px 0 8px;
-      display: block; white-space: pre-wrap;
-    }
+    .section-title { font-family: var(--font-family-display); font-size: 20px; font-weight: 700; color: var(--color-gray-84); line-height: 28px; padding: 24px 0 8px; display: block; white-space: pre-wrap; }
     .section-inner { padding: 24px 20px; border-radius: 20px; }
-
-    /* ── Participation ───────────────────────────────── */
     .step-list { display: flex; flex-direction: column; }
     .step-item { display: flex; gap: 10px; align-items: flex-start; }
     .step-timeline { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 8px; align-self: stretch; }
-    .step-bullet { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .step-bullet { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; margin-bottom: 5px; }
     .step-line { flex: 1; width: 1px; min-height: 8px; }
     .step-content { flex: 1; padding-bottom: 20px; }
     .step-item:last-child .step-content { padding-bottom: 0; }
-    .step-label {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 700; line-height: 20px;
-      display: block; white-space: pre-wrap;
-    }
-    .step-desc {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 500; color: var(--color-gray-84);
-      line-height: 20px; margin-top: 2px;
-      display: block; white-space: pre-wrap;
-    }
-    /* ── Step 추가/삭제 버튼 ─────────────────────────── */
-    .step-remove-btn {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 1.5px solid rgba(0,0,0,0.15);
-      background: var(--color-white-100);
-      cursor: pointer; flex-shrink: 0; margin-top: 5px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--color-gray-54); font-size: 13px; line-height: 1;
-      transition: border-color 0.12s, color 0.12s;
-    }
-    .step-remove-btn:hover { border-color: #ff3b30; color: #ff3b30; }
-    .step-add-btn {
-      display: flex; align-items: center; gap: 6px;
-      margin-top: 14px; padding: 7px 10px;
-      border: 1.5px dashed var(--color-gray-12);
-      border-radius: 8px; cursor: pointer;
-      color: var(--color-gray-40); font-size: 12px; font-weight: 600;
-      transition: border-color 0.12s, color 0.12s;
-      user-select: none;
-    }
-    .step-add-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
-    .step-add-icon {
-      width: 16px; height: 16px; border-radius: 50%;
-      border: 1.5px solid currentColor;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; flex-shrink: 0;
-    }
-
+    .step-label { font-size: 15px; font-weight: 700; line-height: 20px; display: block; white-space: pre-wrap; }
+    .step-desc { font-size: 15px; font-weight: 500; color: var(--color-gray-84); line-height: 20px; margin-top: 2px; display: block; white-space: pre-wrap; }
     .tip-list { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08); }
     .tip-item { display: flex; flex-direction: column; gap: 6px; }
-    .tip-tag {
-      display: inline-flex; align-items: center; height: 20px;
-      padding: 4px 10px 3px; border-radius: 4px; background: #ff58a4;
-      font-family: var(--font-family-text); font-size: 11px; font-weight: 700;
-      color: var(--color-white-100); align-self: flex-start;
-    }
-    .tip-text {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 500; color: var(--color-gray-84);
-      line-height: 20px; display: block; white-space: pre-wrap;
-    }
-
-    /* ── Reward ──────────────────────────────────────── */
+    .tip-tag { display: inline-flex; align-items: center; height: 20px; padding: 4px 10px 3px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fff; align-self: flex-start; }
+    .tip-text { font-size: 15px; font-weight: 500; color: var(--color-gray-84); line-height: 20px; display: block; white-space: pre-wrap; }
     .reward-list { display: flex; flex-direction: column; }
-    .reward-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
+    .reward-item { display: flex; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
     .reward-item:last-child { border-bottom: none; }
-    .reward-text {
-      flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0;
-    }
-    .reward-rank {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 700; line-height: 20px;
-      white-space: pre-wrap;
-    }
-    .reward-name {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 600; color: var(--color-gray-84);
-      line-height: 20px; white-space: pre-wrap;
-    }
-    .reward-img {
-      width: 90px; height: 60px; flex-shrink: 0; overflow: hidden;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #e0f0ff 0%, #c2e0ff 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
-    }
-
-    /* ── Period ──────────────────────────────────────── */
-    .period-text {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 600; color: var(--color-gray-84);
-      line-height: 20px; white-space: pre-wrap; display: block;
-    }
-
-    /* ── Disclaimer ──────────────────────────────────── */
+    .reward-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .reward-rank { font-size: 15px; font-weight: 700; line-height: 20px; white-space: pre-wrap; }
+    .reward-name { font-size: 15px; font-weight: 600; color: var(--color-gray-84); line-height: 20px; white-space: pre-wrap; }
+    .reward-img { width: 90px; height: 60px; flex-shrink: 0; overflow: hidden; border-radius: 8px; background: linear-gradient(135deg,#e0f0ff,#c2e0ff); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .period-text { font-size: 15px; font-weight: 600; color: var(--color-gray-84); line-height: 20px; white-space: pre-wrap; display: block; }
     .disclaimer { background: var(--color-bg-offwhite-01); padding: 32px 16px 70px; }
-    .disclaimer__title {
-      font-family: var(--font-family-text);
-      font-size: 15px; font-weight: 700; color: var(--color-gray-54);
-      margin-bottom: 14px; display: block; white-space: pre-wrap;
-    }
+    .disclaimer__title { font-size: 15px; font-weight: 700; color: var(--color-gray-54); margin-bottom: 14px; display: block; white-space: pre-wrap; }
     .disclaimer__list { display: flex; flex-direction: column; gap: 12px; }
     .disclaimer__item { display: flex; gap: 7px; }
     .disclaimer__bullet { font-size: 11px; color: var(--color-gray-54); line-height: 18px; flex-shrink: 0; margin-top: 1px; }
-    .disclaimer__text {
-      font-family: var(--font-family-text);
-      font-size: 13px; font-weight: 400; color: var(--color-gray-54);
-      line-height: 18px; white-space: pre-wrap; display: block;
-    }
+    .disclaimer__text { font-size: 13px; font-weight: 400; color: var(--color-gray-54); line-height: 18px; white-space: pre-wrap; display: block; }
   </style>
 </head>
 <body>
@@ -420,191 +577,323 @@
 <script type="text/babel">
 const { useState, useRef, useCallback, useEffect } = React;
 
-/* ── 색상 변환 유틸 ──────────────────────────────────── */
+/* ── utils ───────────────────────────────────────────── */
 function hsvToHex(h, s, v) {
   s /= 100; v /= 100;
-  const f = (n, k = (n + h / 60) % 6) =>
-    v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
-  return '#' + [f(5), f(3), f(1)]
-    .map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
+  const f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+  return '#' + [f(5), f(3), f(1)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
 }
 function hexToHsv(hex) {
-  const r = parseInt(hex.slice(1,3),16)/255;
-  const g = parseInt(hex.slice(3,5),16)/255;
-  const b = parseInt(hex.slice(5,7),16)/255;
+  const r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
   const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
   let h = 0;
-  if (d) {
-    if (max === r) h = ((g - b) / d + 6) % 6;
-    else if (max === g) h = (b - r) / d + 2;
-    else h = (r - g) / d + 4;
-    h *= 60;
-  }
-  return { h: Math.round(h), s: max ? Math.round((d / max) * 100) : 0, v: Math.round(max * 100) };
+  if (d) { if (max===r) h=((g-b)/d+6)%6; else if (max===g) h=(b-r)/d+2; else h=(r-g)/d+4; h*=60; }
+  return { h: Math.round(h), s: max ? Math.round((d/max)*100) : 0, v: Math.round(max*100) };
 }
-function isValidHex(h) { return /^#[0-9a-fA-F]{6}$/.test(h); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+async function toDataUrl(url) {
+  if (!url) return null;
+  return new Promise(resolve => {
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    img.onload = () => { const c = document.createElement('canvas'); c.width=img.naturalWidth; c.height=img.naturalHeight; c.getContext('2d').drawImage(img,0,0); resolve(c.toDataURL('image/jpeg',0.85)); };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
 
 /* ── EditableText ────────────────────────────────────── */
-/*
- * contentEditable을 React state와 충돌 없이 쓰는 패턴:
- * - 마운트 시 초기값을 DOM에 직접 세팅
- * - 외부(value prop)가 바뀔 때만 DOM 갱신 (lastValueRef 비교)
- * - onBlur에서 state 업데이트, lastValueRef도 갱신
- * → 다른 state 변경으로 re-render 되어도 편집 내용 유지
- */
-function EditableText({ tag: Tag = 'span', className, style, value, onChange }) {
+function EditableText({ tag: Tag='span', className, style, value, onChange }) {
   const domRef = useRef(null);
-  const lastValueRef = useRef(value);
-
-  useEffect(() => {
-    if (domRef.current) {
-      domRef.current.innerText = value;
-      lastValueRef.current = value;
-    }
-  }, []); // eslint-disable-line
-
-  useEffect(() => {
-    if (domRef.current && value !== lastValueRef.current) {
-      domRef.current.innerText = value;
-      lastValueRef.current = value;
-    }
-  }, [value]);
-
-  return (
-    <Tag
-      ref={domRef}
-      className={className}
-      style={style}
-      contentEditable
-      suppressContentEditableWarning
-      onBlur={(e) => {
-        const newVal = e.currentTarget.innerText;
-        lastValueRef.current = newVal;
-        onChange && onChange(newVal);
-      }}
-    />
-  );
+  const lastRef = useRef(value);
+  useEffect(() => { if (domRef.current) { domRef.current.innerText = value; lastRef.current = value; } }, []);
+  useEffect(() => { if (domRef.current && value !== lastRef.current) { domRef.current.innerText = value; lastRef.current = value; } }, [value]);
+  return <Tag ref={domRef} className={className} style={style} contentEditable suppressContentEditableWarning
+    onBlur={e => { const v = e.currentTarget.innerText; lastRef.current = v; onChange && onChange(v); }} />;
 }
 
 /* ── ColorPicker ─────────────────────────────────────── */
 function ColorPicker({ hex, onChange }) {
   const { h, s, v } = hexToHsv(hex);
-  const paletteRef = useRef();
-  const isDragging = useRef(false);
-  const [hexInput, setHexInput] = useState(hex.slice(1).toUpperCase());
-
-  useEffect(() => { setHexInput(hex.slice(1).toUpperCase()); }, [hex]);
-
-  const pureHueHex = hsvToHex(h, 100, 100);
-
-  const pickFromPalette = useCallback((e) => {
-    const el = paletteRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
+  const palRef = useRef(); const drag = useRef(false);
+  const [inp, setInp] = useState(hex.slice(1).toUpperCase());
+  useEffect(() => setInp(hex.slice(1).toUpperCase()), [hex]);
+  const pureHex = hsvToHex(h, 100, 100);
+  const pick = useCallback(e => {
+    const el = palRef.current; if (!el) return;
+    const r = el.getBoundingClientRect();
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const cy = e.touches ? e.touches[0].clientY : e.clientY;
-    const nx = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
-    const ny = Math.max(0, Math.min(1, (cy - rect.top) / rect.height));
-    onChange(hsvToHex(h, Math.round(nx * 100), Math.round((1 - ny) * 100)));
+    onChange(hsvToHex(h, Math.round(Math.max(0,Math.min(1,(cx-r.left)/r.width))*100), Math.round((1-Math.max(0,Math.min(1,(cy-r.top)/r.height)))*100)));
   }, [h, onChange]);
-
-  const onPaletteDown = (e) => { isDragging.current = true; pickFromPalette(e); };
-  const onPaletteMove = (e) => { if (isDragging.current) pickFromPalette(e); };
-  const onPaletteUp   = () => { isDragging.current = false; };
-
-  const onHueChange = (e) => onChange(hsvToHex(+e.target.value, s, v));
-
-  const onHexInput = (e) => {
-    const val = e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6).toUpperCase();
-    setHexInput(val);
-    if (val.length === 6) onChange('#' + val);
-  };
-
   return (
     <div className="cp">
-      <div
-        className="cp-palette" ref={paletteRef}
-        onMouseDown={onPaletteDown} onMouseMove={onPaletteMove}
-        onMouseUp={onPaletteUp} onMouseLeave={onPaletteUp}
-        onTouchStart={onPaletteDown} onTouchMove={onPaletteMove} onTouchEnd={onPaletteUp}
-      >
-        <div className="cp-palette__sat" style={{background: `linear-gradient(to right, #fff, ${pureHueHex})`}} />
-        <div className="cp-palette__dark" />
-        <div className="cp-palette__thumb" style={{left: `${s}%`, top: `${100-v}%`, background: hex}} />
+      <div className="cp-palette" ref={palRef}
+        onMouseDown={e=>{drag.current=true;pick(e);}} onMouseMove={e=>{if(drag.current)pick(e);}}
+        onMouseUp={()=>drag.current=false} onMouseLeave={()=>drag.current=false}
+        onTouchStart={e=>{drag.current=true;pick(e);}} onTouchMove={pick} onTouchEnd={()=>drag.current=false}>
+        <div className="cp-palette__sat" style={{background:`linear-gradient(to right,#fff,${pureHex})`}}/>
+        <div className="cp-palette__dark"/>
+        <div className="cp-palette__thumb" style={{left:`${s}%`,top:`${100-v}%`,background:hex}}/>
       </div>
-
       <div className="cp-hue-wrap">
-        <div className="cp-hue-track" />
-        <input className="cp-hue-input" type="range" min="0" max="360" value={h} onChange={onHueChange} />
-        <div className="cp-hue-thumb-overlay" style={{left: `calc(${(h/360)*100}%)`, background: pureHueHex}} />
+        <div className="cp-hue-track"/>
+        <input className="cp-hue-input" type="range" min="0" max="360" value={h} onChange={e=>onChange(hsvToHex(+e.target.value,s,v))}/>
+        <div className="cp-hue-thumb-overlay" style={{left:`${(h/360)*100}%`,background:pureHex}}/>
       </div>
-
       <div className="cp-bottom">
-        <div className="cp-preview" style={{background: hex}} />
+        <div className="cp-preview" style={{background:hex}}/>
         <div className="cp-hex-wrap">
           <span className="cp-hex-label">Hex</span>
-          <input
-            className="cp-hex-input"
-            value={hexInput}
-            onChange={onHexInput}
-            onBlur={() => setHexInput(hex.slice(1).toUpperCase())}
-            maxLength={6}
-          />
+          <input className="cp-hex-input" value={inp} maxLength={6}
+            onChange={e=>{const val=e.target.value.replace(/[^0-9a-fA-F]/g,'').slice(0,6).toUpperCase();setInp(val);if(val.length===6)onChange('#'+val);}}
+            onBlur={()=>setInp(hex.slice(1).toUpperCase())}/>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── CtrlCard (아코디언) ─────────────────────────────── */
-function CtrlCard({ label, badge, defaultOpen = true, children }) {
+/* ── CtrlCard ────────────────────────────────────────── */
+function CtrlCard({ label, badge, defaultOpen=true, children }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="ctrl-card">
-      <div className="ctrl-card__head" onClick={() => setOpen(o => !o)}>
-        <div>
-          <span className="ctrl-card__label">{label}</span>
-          {badge && <span className="ctrl-card__badge">· {badge}</span>}
-        </div>
-        <span className={`ctrl-card__chevron ${open ? 'open' : ''}`}>▼</span>
+      <div className="ctrl-card__head" onClick={()=>setOpen(o=>!o)}>
+        <div><span className="ctrl-card__label">{label}</span>{badge&&<span className="ctrl-card__badge">· {badge}</span>}</div>
+        <span className={`ctrl-card__chevron${open?' open':''}`}>▼</span>
       </div>
-      {open && (<>
-        <div className="ctrl-card__divider" />
-        <div className="ctrl-card__body">{children}</div>
-      </>)}
+      {open && <div className="ctrl-card__body">{children}</div>}
     </div>
   );
 }
 
+/* ── DropZone ────────────────────────────────────────── */
+function DropZone({ index, dropIdx, dragging, onDragOver, onDrop, onDragLeave }) {
+  const isOver = dropIdx === index;
+  return (
+    <div
+      className={`drop-zone${dragging ? ' is-active' : ''}${isOver ? ' is-over' : ''}`}
+      onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; onDragOver(index); }}
+      onDrop={e => { e.preventDefault(); onDrop(index); }}
+      onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget)) onDragLeave(); }}
+    >
+      <span className="drop-zone__label">+ 여기에 섹션 추가</span>
+    </div>
+  );
+}
+
+/* ── PanelHdr ────────────────────────────────────────── */
+function PanelHdr({ label, onDelete }) {
+  return (
+    <div className="panel-hdr">
+      <span className="panel-hdr__label">{label}</span>
+      <button className="panel-hdr__del" onClick={onDelete} title="섹션 제거 (Backspace)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+/* ── Section Thumbnail (schematic preview) ───────────── */
+function SectionThumb({ type, variant }) {
+  const B = ({ w='100%', h=6, bg='#E0E0E1', r=3, style={} }) => (
+    <div style={{ width:w, height:h, background:bg, borderRadius:r, flexShrink:0, ...style }} />
+  );
+  const s = { width:'100%', height:'100%', padding:'8px 10px', display:'flex', flexDirection:'column', gap:5 };
+
+  if (type === 'hero') {
+    if (variant === 'v1') return (
+      <div style={{width:'100%',height:'100%',background:'linear-gradient(145deg,#c8d4ee,#a8bce0)',position:'relative',display:'flex',alignItems:'flex-end',padding:10}}>
+        <div style={{display:'flex',flexDirection:'column',gap:4}}>
+          <B w={90} h={9} bg="rgba(255,255,255,0.75)" r={4}/>
+          <B w={64} h={7} bg="rgba(255,255,255,0.5)" r={4}/>
+        </div>
+      </div>
+    );
+    if (variant === 'v2') return (
+      <div style={{width:'100%',height:'100%',display:'flex'}}>
+        <div style={{flex:1,background:'linear-gradient(145deg,#c8d4ee,#a8bce0)'}}/>
+        <div style={{width:88,background:'#f8f8fa',padding:'10px 8px',display:'flex',flexDirection:'column',gap:5,justifyContent:'center'}}>
+          <B w="90%" h={8} bg="#E0E0E1"/>
+          <B w="65%" h={6} bg="#E0E0E1"/>
+          <B w={40} h={16} bg="#5C46FF" r={5} style={{marginTop:4}}/>
+        </div>
+      </div>
+    );
+  }
+  if (type === 'tabs') {
+    if (variant === 'v1') return (
+      <div style={{...s}}>
+        <div style={{display:'flex',gap:6,alignItems:'flex-end'}}>
+          <div style={{padding:'5px 10px',background:'transparent',borderBottom:'2px solid #5C46FF',fontSize:9,fontWeight:700,color:'#5C46FF'}}>Event</div>
+          <div style={{padding:'5px 10px',fontSize:9,color:'#C7C7C9'}}>Item</div>
+          <div style={{padding:'5px 10px',fontSize:9,color:'#C7C7C9'}}>More</div>
+        </div>
+        <B w="100%" h={1} bg="#E0E0E1" r={0} style={{marginTop:-5}}/>
+        <B w="75%" h={7} bg="#E0E0E1" style={{marginTop:6}}/>
+        <B w="55%" h={6} bg="#E0E0E1"/>
+      </div>
+    );
+    if (variant === 'v2') return (
+      <div style={{...s}}>
+        <div style={{display:'flex',gap:3,background:'#F0F0F0',borderRadius:8,padding:3}}>
+          <div style={{flex:1,background:'#fff',borderRadius:6,padding:'4px 0',textAlign:'center',fontSize:9,fontWeight:700,color:'#292930'}}>Event</div>
+          <div style={{flex:1,textAlign:'center',fontSize:9,color:'#99999C',padding:'4px 0'}}>Item</div>
+        </div>
+        <B w="75%" h={7} bg="#E0E0E1" style={{marginTop:4}}/>
+        <B w="55%" h={6} bg="#E0E0E1"/>
+      </div>
+    );
+  }
+  if (type === 'participation') {
+    if (variant === 'v1') return (
+      <div style={{...s}}>
+        {[0,1,2].map(i => (
+          <div key={i} style={{display:'flex',gap:6,alignItems:'flex-start'}}>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2,paddingTop:1}}>
+              <div style={{width:7,height:7,borderRadius:'50%',background:'#714113',flexShrink:0}}/>
+              {i<2 && <div style={{width:1,height:12,background:'#C7C7C9'}}/>}
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:3}}>
+              <B w={42} h={5} bg="#714113" r={2}/>
+              <B w={60} h={4} bg="#E0E0E1" r={2}/>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+    if (variant === 'v2') return (
+      <div style={{...s}}>
+        {[1,2,3].map(i => (
+          <div key={i} style={{display:'flex',gap:6,alignItems:'center',background:'#f5f5f6',borderRadius:6,padding:'4px 6px'}}>
+            <div style={{width:16,height:16,borderRadius:4,background:'#5C46FF',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:'#fff',fontWeight:700,flexShrink:0}}>{i}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:2}}>
+              <B w={56} h={4} bg="#E0E0E1" r={2}/>
+              <B w={40} h={3} bg="#E0E0E1" r={2}/>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (type === 'reward') {
+    if (variant === 'v1') return (
+      <div style={{width:'100%',height:'100%',padding:'6px 10px',display:'flex',flexDirection:'column'}}>
+        {[0,1,2].map(i => (
+          <div key={i} style={{display:'flex',alignItems:'center',gap:7,padding:'5px 0',borderBottom:i<2?'1px solid #f0f0f0':'none'}}>
+            <div style={{flex:1,display:'flex',flexDirection:'column',gap:3}}>
+              <B w={32} h={5} bg="#714113" r={2}/>
+              <B w={46} h={4} bg="#E0E0E1" r={2}/>
+            </div>
+            <div style={{width:28,height:20,background:'linear-gradient(135deg,#e0f0ff,#c2e0ff)',borderRadius:4}}/>
+          </div>
+        ))}
+      </div>
+    );
+    if (variant === 'v2') return (
+      <div style={{width:'100%',height:'100%',padding:8,display:'flex',flexDirection:'column',gap:4}}>
+        {[0,1].map(row => (
+          <div key={row} style={{display:'flex',gap:5}}>
+            {[0,1].map(col => (
+              <div key={col} style={{flex:1,background:'#f5f5f6',borderRadius:6,padding:5}}>
+                <div style={{width:'100%',height:22,background:'linear-gradient(135deg,#e0f0ff,#c2e0ff)',borderRadius:4}}/>
+                <div style={{marginTop:4,display:'flex',flexDirection:'column',gap:2}}>
+                  <B w="70%" h={4} bg="#714113" r={2}/>
+                  <B w="85%" h={3} bg="#E0E0E1" r={2}/>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (type === 'period') {
+    if (variant === 'v1') return (
+      <div style={{...s, justifyContent:'center', gap:8}}>
+        <B w="55%" h={7} bg="#E0E0E1"/>
+        <div style={{background:'#fff4e9',borderRadius:8,padding:'8px 10px'}}>
+          <B w="70%" h={6} bg="#C7C7C9"/>
+        </div>
+      </div>
+    );
+    if (variant === 'v2') return (
+      <div style={{...s, justifyContent:'center', gap:6}}>
+        <B w="50%" h={6} bg="#E0E0E1"/>
+        <div style={{display:'flex',gap:5}}>
+          {['시작','종료'].map(label => (
+            <div key={label} style={{flex:1,background:'#fff4e9',borderRadius:6,padding:6}}>
+              <div style={{fontSize:8,color:'#99999C',marginBottom:3}}>{label}</div>
+              <B w="90%" h={7} bg="#C7C7C9"/>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (type === 'disclaimer') {
+    return (
+      <div style={{...s, background:'#f5f5f6', padding:'8px 10px'}}>
+        <B w="45%" h={6} bg="#C7C7C9"/>
+        {[1,0.8,1,0.65].map((w,i) => (
+          <div key={i} style={{display:'flex',gap:4,alignItems:'center'}}>
+            <div style={{width:4,height:4,borderRadius:'50%',background:'#C7C7C9',flexShrink:0}}/>
+            <B w={`${w*85}%`} h={4} bg="#E0E0E1" r={2}/>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return <div style={{width:'100%',height:'100%',background:'#f5f5f6'}}/>;
+}
+
+/* ── Section Types (Insert panel) ───────────────────── */
+const SECTION_TYPES = [
+  { id:'hero',          name:'Hero',          emoji:'🖼', color:'#dce8ff',
+    variants:[{id:'v1',name:'기본형',available:true},{id:'v2',name:'좌우 분할',available:false}]},
+  { id:'tabs',          name:'Tab',           emoji:'🗂', color:'#fff4e9',
+    variants:[{id:'v1',name:'언더라인 탭',available:true},{id:'v2',name:'세그먼트 탭',available:false}]},
+  { id:'participation', name:'Participation', emoji:'📋', color:'#e8ffe8',
+    variants:[{id:'v1',name:'타임라인형',available:true},{id:'v2',name:'카드 넘버형',available:false}]},
+  { id:'reward',        name:'Reward',        emoji:'🏆', color:'#fff9e0',
+    variants:[{id:'v1',name:'리스트형',available:true},{id:'v2',name:'그리드형',available:false}]},
+  { id:'period',        name:'Period',        emoji:'📅', color:'#f0e8ff',
+    variants:[{id:'v1',name:'단일 텍스트',available:true},{id:'v2',name:'시작·종료 분리',available:false}]},
+  { id:'disclaimer',    name:'Disclaimer',    emoji:'📝', color:'#f0f0f0',
+    variants:[{id:'v1',name:'불릿 리스트',available:true}]},
+];
+
+/* ── Templates ───────────────────────────────────────── */
+const TEMPLATES = [
+  { id:'basic-event',   name:'참가형 이벤트', emoji:'🎉', swatchBg:'#fff4e9', available:true  },
+  { id:'ranking-event', name:'랭킹 이벤트',   emoji:'🏆', swatchBg:'#fff9e0', available:false },
+  { id:'attendance',    name:'출석 체크',      emoji:'📅', swatchBg:'#e8f5ff', available:false },
+  { id:'collab',        name:'콜라보 이벤트', emoji:'🤝', swatchBg:'#f0e8ff', available:false },
+  { id:'season',        name:'시즌 이벤트',   emoji:'❄️', swatchBg:'#e8fff8', available:false },
+];
+
+/* ── Section key factory ─────────────────────────────── */
+let _skid = 0;
+const mkSec = (type) => ({ key: `${type}__${++_skid}`, type });
+const DFLT_SECS = () => ['hero','tabs','participation','reward','period','disclaimer'].map(mkSec);
+
 /* ── App ─────────────────────────────────────────────── */
 function App() {
-  /* ── 디자인 state ── */
-  const [heroImg,    setHeroImg]    = useState(null);
-  const [sectionBg,  setSectionBg]  = useState('#fff4e9'); // 이벤트 전용 – 토큰 없음
-  const [stepColor,  setStepColor]  = useState('#714113'); // 이벤트 전용 – 토큰 없음
-
-  /* ── 텍스트 state ── */
-  const [heroTitle, setHeroTitle] = useState('세상에서 가장 핫한\n핑크룩을 완성하자!');
-  const [tabs, setTabs] = useState(['Event', 'Item']);
-  const [activeTab, setActiveTab] = useState(0);
-
-  const [sectionTitles, setSectionTitles] = useState({
-    participation: '참가 방법',
-    reward: '보상',
-    period: '이벤트 기간',
-    disclaimer: 'Disclaimers',
-  });
-
+  const [heroImg,     setHeroImg]     = useState(null);
+  const [sectionBg,   setSectionBg]   = useState('#fff4e9');
+  const [accentColor, setAccentColor] = useState('#714113');
+  const [heroTitle,   setHeroTitle]   = useState('세상에서 가장 핫한\n핑크룩을 완성하자!');
+  const [tabs,        setTabs]        = useState(['Event', 'Item']);
+  const [activeTab,   setActiveTab]   = useState(0);
+  const [sectionTitles, setSectionTitles] = useState({ participation:'참가 방법', reward:'보상', period:'이벤트 기간', disclaimer:'Disclaimers' });
   const [steps, setSteps] = useState([
-    { label: 'STEP 1', desc: 'Shop your Iconic Look\nat the Gym Girl Shop' },
-    { label: 'STEP 2', desc: 'Tap the "Join Event" button\non the event page' },
+    { label:'STEP 1', desc:'Shop your Iconic Look\nat the Gym Girl Shop' },
+    { label:'STEP 2', desc:'Tap the "Join Event" button\non the event page' },
   ]);
-  const [tips, setTips] = useState([
-    { text: "샵 '핑크파워' 탭에서 아이템 구매 시,\n당첨 확률 2배로 UP!" }
-  ]);
-  const [rewards, setRewards] = useState([
-    { rank: 'TOP 1', rankColor: '#ff3691', name: '100 ZEM' },
-  ]);
+  const [tips, setTips] = useState([{ text:"샵 '핑크파워' 탭에서 아이템 구매 시,\n당첨 확률 2배로 UP!" }]);
+  const [rewards, setRewards] = useState([{ rank:'TOP 1', name:'100 ZEM', img:null }]);
   const [periodText, setPeriodText] = useState('01.30(금) — 02.05(목) [UTC+9]');
   const [disclaimers, setDisclaimers] = useState([
     '이벤트 기간 내 참여 이력이 있는 유저 대상입니다.',
@@ -616,407 +905,735 @@ function App() {
     '리워드 지급 관련 문의는 공식 고객센터를 이용해 주세요.',
   ]);
 
-  /* ── 패널 state ── */
-  const [activeSection, setActiveSection] = useState(null);
+  const [activeSection,  setActiveSection]  = useState(null);
+  const [activeTemplate, setActiveTemplate] = useState('basic-event');
+  const [showExport,     setShowExport]     = useState(false);
+  const [showDeploy,     setShowDeploy]     = useState(false);
+  const [deploying,      setDeploying]      = useState(false);
+  const [leftTab,        setLeftTab]        = useState('template'); // 'template' | 'insert'
+  const [insertOpen,     setInsertOpen]     = useState(null);       // section id or null
 
-  const fileRef = useRef();
+  /* ── Dynamic sections (ordered list of {key, type} objects) ── */
+  const [sections, setSections] = useState(DFLT_SECS);
+  const [secHistory, setSecHistory] = useState([]); // for undo
+  const [secFuture,  setSecFuture]  = useState([]); // for redo
 
-  /* STEP 세로선: stepColor보다 밝게 */
-  const stepLineColor = (() => {
-    const { h, s, v } = hexToHsv(stepColor);
-    return hsvToHex(h, Math.max(s - 30, 10), Math.min(v + 40, 95));
-  })();
+  /* ── Drag state ─────────────────────────────────────── */
+  const [draggingSec, setDraggingSec] = useState(null); // { type, name, emoji }
+  const [dropIdx,     setDropIdx]     = useState(null); // insertion index
 
-  const onFile = (e) => {
+  const fileRef = useRef(); const rewardFileRef = useRef(); const editingRIdx = useRef(null);
+  const ghostRef = useRef();
+
+  /* Keep refs current for keyboard handler (avoids stale closures) */
+  const sectRef    = useRef(sections);
+  const histRef    = useRef(secHistory);
+  const futRef     = useRef(secFuture);
+  const activeSRef = useRef(activeSection);
+  useEffect(() => { sectRef.current    = sections;    }, [sections]);
+  useEffect(() => { histRef.current    = secHistory;  }, [secHistory]);
+  useEffect(() => { futRef.current     = secFuture;   }, [secFuture]);
+  useEffect(() => { activeSRef.current = activeSection;}, [activeSection]);
+
+  const stepLineColor = (() => { const {h,s,v}=hexToHsv(accentColor); return hsvToHex(h,Math.max(s-30,10),Math.min(v+40,95)); })();
+
+  /* ── Section CRUD ────────────────────────────────────── */
+  const addSection = (type, atIndex) => {
+    const curr = sectRef.current;
+    const sec = mkSec(type); // always creates new unique key → duplicates allowed
+    setSecHistory(h => [...h, curr]);
+    setSecFuture([]);
+    const idx = (atIndex !== undefined && atIndex !== null) ? atIndex : curr.length;
+    setSections([...curr.slice(0, idx), sec, ...curr.slice(idx)]);
+  };
+  const removeSection = (key) => {
+    const curr = sectRef.current;
+    setSecHistory(h => [...h, curr]);
+    setSecFuture([]);
+    setSections(curr.filter(s => s.key !== key));
+    if (activeSRef.current === key) setActiveSection(null);
+  };
+  const resetSections = () => {
+    setSecHistory(h => [...h, sectRef.current]);
+    setSecFuture([]);
+    setSections(DFLT_SECS());
+    setActiveSection(null);
+  };
+
+  /* ── Drag handlers ───────────────────────────────────── */
+  const handleVariantDragStart = (e, sec) => {
+    if (ghostRef.current) {
+      const iconEl = ghostRef.current.querySelector('.drag-ghost__icon');
+      const nameEl = ghostRef.current.querySelector('.drag-ghost__name');
+      if (iconEl) iconEl.textContent = sec.emoji;
+      if (nameEl) nameEl.textContent = sec.name;
+      e.dataTransfer.setDragImage(ghostRef.current, 110, 30);
+    }
+    e.dataTransfer.effectAllowed = 'copy';
+    e.dataTransfer.setData('text/plain', sec.id);
+    setDraggingSec({ type: sec.id, name: sec.name, emoji: sec.emoji });
+  };
+  const handleDragEnd = () => { setDraggingSec(null); setDropIdx(null); };
+  const handleDropOnCanvas = (index) => {
+    if (!draggingSec) return;
+    addSection(draggingSec.type, index);
+    setDraggingSec(null);
+    setDropIdx(null);
+  };
+
+  /* ── Keyboard shortcuts (installed once via refs) ────── */
+  useEffect(() => {
+    const handler = (e) => {
+      const el = document.activeElement;
+      const isEditable = el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.contentEditable === 'true';
+      /* Backspace/Delete → remove active section */
+      if ((e.key === 'Backspace' || e.key === 'Delete') && activeSRef.current && !isEditable) {
+        e.preventDefault();
+        const key = activeSRef.current; // now a unique key string like 'hero__3'
+        const curr = sectRef.current;
+        setSecHistory(h => [...h, curr]);
+        setSecFuture([]);
+        setSections(curr.filter(s => s.key !== key));
+        setActiveSection(null);
+      }
+      /* Ctrl/Cmd+Z → undo */
+      if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) {
+        e.preventDefault();
+        const h = histRef.current;
+        if (h.length === 0) return;
+        setSecFuture(f => [sectRef.current, ...f]);
+        setSections(h[h.length - 1]);
+        setSecHistory(h => h.slice(0, -1));
+      }
+      /* Ctrl/Cmd+Shift+Z or Ctrl+Y → redo */
+      if ((e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) ||
+          (e.key === 'y' && (e.metaKey || e.ctrlKey))) {
+        e.preventDefault();
+        const f = futRef.current;
+        if (f.length === 0) return;
+        setSecHistory(h => [...h, sectRef.current]);
+        setSections(f[0]);
+        setSecFuture(f => f.slice(1));
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
+  /* 파일을 즉시 base64 data URL로 변환 → blob URL 사용 안 함 */
+  const readAsDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = e => resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const onFile = async e => {
     const f = e.target.files[0];
-    if (f) setHeroImg(URL.createObjectURL(f));
+    if (f) setHeroImg(await readAsDataUrl(f));
     e.target.value = '';
   };
 
-  /* updaters */
-  const addStep = () =>
-    setSteps(ss => [...ss, { label: `STEP ${ss.length + 1}`, desc: '내용을 입력하세요' }]);
-  const removeStep = (i) =>
-    setSteps(ss => ss.length > 1 ? ss.filter((_, idx) => idx !== i) : ss);
-  const updateStep = (i, field, val) =>
-    setSteps(ss => ss.map((s, idx) => idx === i ? { ...s, [field]: val } : s));
-  const updateTip = (i, val) =>
-    setTips(ts => ts.map((t, idx) => idx === i ? { ...t, text: val } : t));
-  const updateReward = (i, field, val) =>
-    setRewards(rs => rs.map((r, idx) => idx === i ? { ...r, [field]: val } : r));
-  const updateDisclaimer = (i, val) =>
-    setDisclaimers(ds => ds.map((d, idx) => idx === i ? val : d));
-  const updateSectionTitle = (key, val) =>
-    setSectionTitles(t => ({ ...t, [key]: val }));
+  const addStep    = () => setSteps(ss => [...ss, {label:`STEP ${ss.length+1}`, desc:'내용을 입력하세요'}]);
+  const removeStep = i  => setSteps(ss => ss.length>1 ? ss.filter((_,idx)=>idx!==i) : ss);
+  const updateStep = (i,f,v) => setSteps(ss => ss.map((s,idx)=>idx===i?{...s,[f]:v}:s));
+  const addTip     = () => setTips(ts => [...ts, {text:'새 팁을 입력하세요'}]);
+  const removeTip  = i  => setTips(ts => ts.length>1 ? ts.filter((_,idx)=>idx!==i) : ts);
+  const updateTip  = (i,v) => setTips(ts => ts.map((t,idx)=>idx===i?{...t,text:v}:t));
+  const addTab     = () => setTabs(ts => [...ts, `Tab ${ts.length+1}`]);
+  const removeTab  = i  => setTabs(ts => { if(ts.length<=1)return ts; const n=ts.filter((_,idx)=>idx!==i); if(activeTab>=n.length)setActiveTab(n.length-1); return n; });
+  const addReward     = () => setRewards(rs => [...rs, {rank:`TOP ${rs.length+1}`, name:'보상 내용', img:null}]);
+  const removeReward  = i  => setRewards(rs => rs.length>1 ? rs.filter((_,idx)=>idx!==i) : rs);
+  const updateReward  = (i,f,v) => setRewards(rs => rs.map((r,idx)=>idx===i?{...r,[f]:v}:r));
+  const updateRewardImg = (i,u) => setRewards(rs => rs.map((r,idx)=>idx===i?{...r,img:u}:r));
+  const openRFile = i => { editingRIdx.current=i; rewardFileRef.current.click(); };
+  const onRFile = async e => {
+    const f = e.target.files[0];
+    if (f && editingRIdx.current !== null) updateRewardImg(editingRIdx.current, await readAsDataUrl(f));
+    e.target.value = '';
+  };
+  const updateDisclaimer   = (i,v) => setDisclaimers(ds => ds.map((d,idx)=>idx===i?v:d));
+  const updateSectionTitle = (k,v) => setSectionTitles(t=>({...t,[k]:v}));
 
-  /* section click-select helpers */
-  const secProps = (name, label) => ({
-    className: `sec-wrap${activeSection === name ? ' is-active' : ''}`,
-    'data-label': label,
-    onClick: (e) => { e.stopPropagation(); setActiveSection(name); },
-  });
+  /* ── Generate standalone HTML ── */
+  /* heroImg / r.img 는 이미 base64 data URL이므로 변환 불필요 */
+  const generateHTML = () => {
+    const heroData    = heroImg;
+    const rewardDatas = rewards.map(r => r.img);
 
-  const inputStyle = {
-    width: '100%', border: '1px solid var(--color-gray-12)',
-    borderRadius: 6, padding: '5px 8px', fontSize: 12,
-    background: 'var(--color-bg-offwhite-01)', outline: 'none',
-    fontFamily: 'var(--font-family-text)', color: 'var(--color-gray-84)',
+    const lineColor = stepLineColor;
+    const tabsHTML  = tabs.map((t,i) => `<div class="tab${i===0?' is-active':''}" onclick="switchTab(${i})">${esc(t)}</div>`).join('');
+    const stepsHTML = steps.map((s,i) => `
+      <div class="step-item">
+        <div class="step-timeline">
+          <div class="step-bullet" style="background:${accentColor}"></div>
+          ${i<steps.length-1?`<div class="step-line" style="background:${lineColor}"></div>`:''}
+        </div>
+        <div class="step-content">
+          <span class="step-label" style="color:${accentColor}">${esc(s.label)}</span>
+          <span class="step-desc">${esc(s.desc)}</span>
+        </div>
+      </div>`).join('');
+    const tipsHTML  = tips.map(t => `
+      <div class="tip-item">
+        <span class="tip-tag" style="background:${accentColor}">TIP!</span>
+        <span class="tip-text">${esc(t.text)}</span>
+      </div>`).join('');
+    const rewardsHTML = rewards.map((r,i) => `
+      <div class="reward-item">
+        <div class="reward-text">
+          <span class="reward-rank" style="color:${accentColor}">${esc(r.rank)}</span>
+          <span class="reward-name">${esc(r.name)}</span>
+        </div>
+        <div class="reward-img">${rewardDatas[i] ? `<img src="${rewardDatas[i]}" alt="reward" style="width:100%;height:100%;object-fit:cover;border-radius:8px">` : '🎁'}</div>
+      </div>`).join('');
+    const disclaimersHTML = disclaimers.map(d => `
+      <div class="disclaimer__item"><span class="disclaimer__bullet">•</span><span class="disclaimer__text">${esc(d)}</span></div>`).join('');
+
+    return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>${esc(heroTitle.split('\n')[0])}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
+.page{width:100%;max-width:375px;background:#fff;min-height:100vh;}
+.nav-bar{height:52px;display:flex;align-items:center;padding:0 20px;background:#fff;border-bottom:1px solid #E0E0E1;}
+.nav-bar__back{font-size:17px;color:#5C46FF;}
+.hero{width:100%;height:248px;position:relative;overflow:hidden;background:#292930;}
+.hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero__empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#292930,#47474D);color:rgba(255,255,255,0.3);font-size:13px;}
+.hero__title{position:absolute;bottom:16px;left:20px;right:20px;color:#fff;font-size:23px;font-weight:700;line-height:1.4;text-shadow:0 0 6px rgba(0,0,0,0.3);white-space:pre-wrap;}
+.tabs{display:flex;padding:0 20px;background:#fff;border-bottom:1px solid #E0E0E1;}
+.tab{padding:12px 16px 10px;font-size:15px;color:#99999C;font-weight:500;border-bottom:2px solid transparent;cursor:pointer;}
+.tab.is-active{color:#292930;font-weight:700;border-bottom-color:#292930;}
+.section-wrap{background:#fff;padding:0 16px 24px;}
+.section-title{font-size:20px;font-weight:700;color:#292930;line-height:28px;padding:24px 0 8px;display:block;white-space:pre-wrap;}
+.section-inner{padding:24px 20px;border-radius:20px;}
+.step-list{display:flex;flex-direction:column;}
+.step-item{display:flex;gap:10px;align-items:flex-start;}
+.step-timeline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:8px;align-self:stretch;}
+.step-bullet{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;margin-bottom:5px;}
+.step-line{flex:1;width:1px;min-height:8px;}
+.step-content{flex:1;padding-bottom:20px;}
+.step-item:last-child .step-content{padding-bottom:0;}
+.step-label{font-size:15px;font-weight:700;line-height:20px;display:block;white-space:pre-wrap;}
+.step-desc{font-size:15px;font-weight:500;color:#292930;line-height:20px;margin-top:2px;display:block;white-space:pre-wrap;}
+.tip-list{display:flex;flex-direction:column;gap:8px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.08);}
+.tip-item{display:flex;flex-direction:column;gap:6px;}
+.tip-tag{display:inline-flex;align-items:center;height:20px;padding:4px 10px 3px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;align-self:flex-start;}
+.tip-text{font-size:15px;font-weight:500;color:#292930;line-height:20px;display:block;white-space:pre-wrap;}
+.reward-list{display:flex;flex-direction:column;}
+.reward-item{display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.reward-item:last-child{border-bottom:none;}
+.reward-text{flex:1;display:flex;flex-direction:column;gap:4px;}
+.reward-rank{font-size:15px;font-weight:700;line-height:20px;white-space:pre-wrap;}
+.reward-name{font-size:15px;font-weight:600;color:#292930;line-height:20px;white-space:pre-wrap;}
+.reward-img{width:90px;height:60px;flex-shrink:0;overflow:hidden;border-radius:8px;background:linear-gradient(135deg,#e0f0ff,#c2e0ff);display:flex;align-items:center;justify-content:center;font-size:32px;}
+.period-text{font-size:15px;font-weight:600;color:#292930;line-height:20px;white-space:pre-wrap;display:block;}
+.disclaimer{background:#F5F5F6;padding:32px 16px 70px;}
+.disclaimer__title{font-size:15px;font-weight:700;color:#75757A;margin-bottom:14px;display:block;white-space:pre-wrap;}
+.disclaimer__list{display:flex;flex-direction:column;gap:12px;}
+.disclaimer__item{display:flex;gap:7px;}
+.disclaimer__bullet{font-size:11px;color:#75757A;line-height:18px;flex-shrink:0;margin-top:1px;}
+.disclaimer__text{font-size:13px;color:#75757A;line-height:18px;white-space:pre-wrap;display:block;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav-bar"><span class="nav-bar__back">‹ Back</span></div>
+  <div class="hero">
+    ${heroData ? `<img src="${heroData}" alt="hero">` : '<div class="hero__empty">이미지 없음</div>'}
+    <div class="hero__title">${esc(heroTitle)}</div>
+  </div>
+  <div class="tabs">${tabsHTML}</div>
+  <div class="section-wrap">
+    <span class="section-title">${esc(sectionTitles.participation)}</span>
+    <div class="section-inner" style="background:${sectionBg}">
+      <div class="step-list">${stepsHTML}</div>
+      <div class="tip-list">${tipsHTML}</div>
+    </div>
+  </div>
+  <div class="section-wrap">
+    <span class="section-title">${esc(sectionTitles.reward)}</span>
+    <div class="section-inner" style="background:${sectionBg};padding-top:0;padding-bottom:0">
+      <div class="reward-list">${rewardsHTML}</div>
+    </div>
+  </div>
+  <div class="section-wrap">
+    <span class="section-title">${esc(sectionTitles.period)}</span>
+    <div class="section-inner" style="background:${sectionBg};padding-top:24px;padding-bottom:24px">
+      <span class="period-text">${esc(periodText)}</span>
+    </div>
+  </div>
+  <div class="disclaimer">
+    <span class="disclaimer__title">${esc(sectionTitles.disclaimer)}</span>
+    <div class="disclaimer__list">${disclaimersHTML}</div>
+  </div>
+</div>
+<script>function switchTab(idx){document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('is-active',i===idx));}<\/script>
+</body>
+</html>`;
   };
 
-  /* ── 패널 컨트롤 렌더 ── */
-  const renderPanelContent = () => {
+  /* ── Deploy: generate + download + show guide ── */
+  const deployPage = () => {
+    setDeploying(true);
+    try {
+      const html = generateHTML();
+      const blob = new Blob([html], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'zepeto-event.html';
+      a.click();
+      setShowDeploy(true);
+    } finally {
+      setDeploying(false);
+    }
+  };
+
+  /* ── Export JSON ── */
+  const exportJSON = JSON.stringify({ template:activeTemplate, heroTitle, sectionBg, accentColor, tabs, steps, tips:tips.map(t=>t.text), rewards:rewards.map(r=>({rank:r.rank,name:r.name})), periodText, sectionTitles, disclaimers }, null, 2);
+  const downloadExport = () => { const b=new Blob([exportJSON],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='zepeto-event-page.json'; a.click(); };
+
+  const secProps = (key, label) => ({
+    className: `sec-wrap${activeSection===key?' is-active':''}`,
+    'data-label': label,
+    onClick: e => { e.stopPropagation(); setActiveSection(key); },
+  });
+
+  /* ── Panel content ── */
+  const renderPanel = () => {
     if (!activeSection) return (
       <div className="panel__empty">
         <div className="panel__empty-icon">✦</div>
         <div>미리보기의 섹션을<br/>클릭하면 편집 옵션이<br/>여기에 표시됩니다</div>
       </div>
     );
-
-    if (activeSection === 'hero') return (
-      <>
-        <div className="panel__section-label">EventHero</div>
-        <CtrlCard label="배경 이미지">
-          <div>
-            <div className="ctrl-group__label">Hero Image</div>
-            <div className="upload-zone" onClick={() => fileRef.current.click()}>
-              {heroImg
-                ? <img className="upload-zone__thumb" src={heroImg} alt="preview" />
-                : <>
-                    <svg width="22" height="22" fill="none" stroke="#C7C7C9" strokeWidth="1.5" viewBox="0 0 24 24">
-                      <rect x="3" y="3" width="18" height="18" rx="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                    <div className="upload-zone__hint">클릭해서 업로드<br/>JPG · PNG · WebP</div>
-                  </>
-              }
-              <input ref={fileRef} type="file" accept="image/*" onChange={onFile} />
-            </div>
-            {heroImg && <span className="upload-reset" onClick={() => setHeroImg(null)}>이미지 제거</span>}
+    /* Derive type from the active section's key */
+    const activeSec = sections.find(s => s.key === activeSection);
+    const type = activeSec?.type;
+    if (!type) return null;
+    if (type === 'hero') return (<>
+      <PanelHdr label="EventHero" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="배경 이미지">
+        <div>
+          <div className="ctrl-group__label">Hero Image · 권장 375 × 248 px</div>
+          <div className="upload-zone" onClick={() => fileRef.current.click()}>
+            {heroImg
+              ? <img className="upload-zone__thumb" src={heroImg} alt="preview" />
+              : <><svg width="22" height="22" fill="none" stroke="#C7C7C9" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <div className="upload-zone__hint">클릭해서 업로드<br/>JPG · PNG · WebP<br/><strong style={{color:'var(--color-gray-54)'}}>권장: 375 × 248 px</strong></div></>}
+            <input ref={fileRef} type="file" accept="image/*" onChange={onFile} />
           </div>
-        </CtrlCard>
-        <CtrlCard label="타이틀 텍스트" defaultOpen={false}>
-          <div className="ctrl-info">미리보기의 텍스트를<br/>직접 클릭해서 편집하세요</div>
-        </CtrlCard>
-      </>
-    );
-
-    if (activeSection === 'tabs') return (
-      <>
-        <div className="panel__section-label">TabSection</div>
-        <CtrlCard label="탭 레이블">
-          {tabs.map((t, i) => (
-            <div key={i}>
-              <div className="ctrl-group__label">Tab {i + 1}</div>
-              <input style={inputStyle} value={t}
-                onChange={e => setTabs(ts => ts.map((x, idx) => idx === i ? e.target.value : x))} />
+          {heroImg && <span className="upload-reset" onClick={() => setHeroImg(null)}>이미지 제거</span>}
+        </div>
+      </CtrlCard>
+      <CtrlCard label="타이틀 텍스트">
+        <div>
+          <div className="ctrl-group__label">텍스트 내용</div>
+          <textarea className="step-panel-input" rows={3} value={heroTitle} onChange={e => setHeroTitle(e.target.value)} placeholder="이벤트 타이틀을 입력하세요" />
+          <div className="ctrl-info" style={{marginTop:4}}>미리보기에서 직접 클릭해도 편집 가능합니다</div>
+        </div>
+      </CtrlCard>
+    </>);
+    if (type === 'tabs') return (<>
+      <PanelHdr label="TabSection" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="탭 목록">
+        {tabs.map((t,i) => (
+          <div className="step-row" key={i}>
+            <div className="step-row__inputs">
+              <div className="step-row__num">Tab {i+1}</div>
+              <input className="step-panel-input" value={t} onChange={e => setTabs(ts => ts.map((x,idx)=>idx===i?e.target.value:x))} placeholder="탭 레이블" />
             </div>
-          ))}
-        </CtrlCard>
-      </>
-    );
-
-    if (activeSection === 'participation') return (
-      <>
-        <div className="panel__section-label">Participation</div>
-        <CtrlCard label="스텝 목록">
-          {steps.map((s, i) => (
-            <div className="step-row" key={i}>
-              <div className="step-row__inputs">
-                <div className="step-row__num">Step {i + 1}</div>
-                <input
-                  className="step-panel-input"
-                  value={s.label}
-                  onChange={e => updateStep(i, 'label', e.target.value)}
-                  placeholder="레이블 (예: STEP 1)"
-                />
-                <textarea
-                  className="step-panel-input"
-                  rows={2}
-                  value={s.desc}
-                  onChange={e => updateStep(i, 'desc', e.target.value)}
-                  placeholder="설명을 입력하세요"
-                />
+            <button className="step-row__minus" onClick={() => removeTab(i)}>−</button>
+          </div>
+        ))}
+        <div className="step-panel-add" onClick={addTab}><span>＋</span> 탭 추가</div>
+      </CtrlCard>
+    </>);
+    if (type === 'participation') return (<>
+      <PanelHdr label="Participation" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="스텝 목록">
+        {steps.map((s,i) => (
+          <div className="step-row" key={i}>
+            <div className="step-row__inputs">
+              <div className="step-row__num">Step {i+1}</div>
+              <input className="step-panel-input" value={s.label} onChange={e => updateStep(i,'label',e.target.value)} placeholder="레이블" />
+              <textarea className="step-panel-input" rows={2} value={s.desc} onChange={e => updateStep(i,'desc',e.target.value)} placeholder="설명" />
+            </div>
+            <button className="step-row__minus" onClick={() => removeStep(i)}>−</button>
+          </div>
+        ))}
+        <div className="step-panel-add" onClick={addStep}><span>＋</span> 스텝 추가</div>
+      </CtrlCard>
+      <CtrlCard label="팁 목록" defaultOpen={false}>
+        {tips.map((t,i) => (
+          <div className="step-row" key={i}>
+            <div className="step-row__inputs">
+              <div className="step-row__num">Tip {i+1}</div>
+              <textarea className="step-panel-input" rows={2} value={t.text} onChange={e => updateTip(i,e.target.value)} placeholder="팁 내용" />
+            </div>
+            <button className="step-row__minus" onClick={() => removeTip(i)}>−</button>
+          </div>
+        ))}
+        <div className="step-panel-add" onClick={addTip}><span>＋</span> 팁 추가</div>
+      </CtrlCard>
+      <CtrlCard label="Event Card BG" badge="공유" defaultOpen={false}>
+        <div><div className="ctrl-group__label">카드 배경 컬러</div><ColorPicker hex={sectionBg} onChange={setSectionBg}/></div>
+      </CtrlCard>
+      <CtrlCard label="강조 컬러" badge="공유" defaultOpen={false}>
+        <div><div className="ctrl-group__label">스텝 · 팁뱃지 · 보상 공통 컬러</div><ColorPicker hex={accentColor} onChange={setAccentColor}/></div>
+      </CtrlCard>
+    </>);
+    if (type === 'reward') return (<>
+      <PanelHdr label="RewardSection" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="보상 목록">
+        {rewards.map((r,i) => (
+          <div className="step-row" key={i}>
+            <div className="step-row__inputs">
+              <div className="step-row__num">Reward {i+1}</div>
+              <input className="step-panel-input" value={r.rank} onChange={e => updateReward(i,'rank',e.target.value)} placeholder="순위 (예: TOP 1)" />
+              <input className="step-panel-input" value={r.name} onChange={e => updateReward(i,'name',e.target.value)} placeholder="보상 (예: 100 ZEM)" />
+              <div className="reward-panel-img" onClick={() => openRFile(i)} title="권장: 90 × 60 px">
+                {r.img ? <img src={r.img} alt="reward"/> : <div className="reward-panel-img__hint">🖼 이미지 업로드<br/>권장: 90 × 60 px</div>}
               </div>
-              <button className="step-row__minus" onClick={() => removeStep(i)} title="삭제">−</button>
+              {r.img && <span className="upload-reset" onClick={() => updateRewardImg(i,null)}>이미지 제거</span>}
             </div>
-          ))}
-          <div className="step-panel-add" onClick={addStep}>
-            <span>＋</span> 스텝 추가
+            <button className="step-row__minus" onClick={() => removeReward(i)}>−</button>
           </div>
-        </CtrlCard>
-        <CtrlCard label="Event Card BG" badge="공유">
-          <div>
-            <div className="ctrl-group__label">카드 배경 컬러</div>
-            <ColorPicker hex={sectionBg} onChange={setSectionBg} />
-          </div>
-        </CtrlCard>
-        <CtrlCard label="STEP 컬러">
-          <div>
-            <div className="ctrl-group__label">STEP 번호 & 불릿 컬러</div>
-            <ColorPicker hex={stepColor} onChange={setStepColor} />
-          </div>
-        </CtrlCard>
-      </>
-    );
-
-    if (activeSection === 'reward') return (
-      <>
-        <div className="panel__section-label">RewardSection</div>
-        <CtrlCard label="Event Card BG" badge="공유">
-          <div>
-            <div className="ctrl-group__label">카드 배경 컬러</div>
-            <ColorPicker hex={sectionBg} onChange={setSectionBg} />
-          </div>
-        </CtrlCard>
-        <CtrlCard label="TOP 1 순위 컬러" defaultOpen={false}>
-          <div>
-            <div className="ctrl-group__label">TOP 1 컬러</div>
-            <ColorPicker hex={rewards[0]?.rankColor || '#ff3691'} onChange={v => updateReward(0, 'rankColor', v)} />
-          </div>
-        </CtrlCard>
-      </>
-    );
-
-    if (activeSection === 'period') return (
-      <>
-        <div className="panel__section-label">PeriodSection</div>
-        <CtrlCard label="Event Card BG" badge="공유">
-          <div>
-            <div className="ctrl-group__label">카드 배경 컬러</div>
-            <ColorPicker hex={sectionBg} onChange={setSectionBg} />
-          </div>
-        </CtrlCard>
-        <CtrlCard label="기간 텍스트" defaultOpen={false}>
-          <div className="ctrl-info">미리보기의 날짜 텍스트를<br/>직접 클릭해서 편집하세요</div>
-        </CtrlCard>
-      </>
-    );
-
-    if (activeSection === 'disclaimer') return (
-      <>
-        <div className="panel__section-label">Disclaimer</div>
-        <CtrlCard label="DisclaimerSection" badge="고정">
-          <div className="ctrl-info">
-            배경색은 토큰 <code style={{fontFamily:'monospace', fontSize:11}}>--color-bg-offwhite-01</code> 로 고정됩니다.<br/><br/>
-            텍스트는 미리보기에서<br/>직접 클릭해 편집하세요.
-          </div>
-        </CtrlCard>
-      </>
-    );
-
+        ))}
+        <div className="step-panel-add" onClick={addReward}><span>＋</span> 보상 추가</div>
+      </CtrlCard>
+      <CtrlCard label="강조 컬러" badge="공유" defaultOpen={false}>
+        <div><div className="ctrl-group__label">스텝 · 팁뱃지 · 보상 공통 컬러</div><ColorPicker hex={accentColor} onChange={setAccentColor}/></div>
+      </CtrlCard>
+      <CtrlCard label="Event Card BG" badge="공유" defaultOpen={false}>
+        <div><div className="ctrl-group__label">카드 배경 컬러</div><ColorPicker hex={sectionBg} onChange={setSectionBg}/></div>
+      </CtrlCard>
+    </>);
+    if (type === 'period') return (<>
+      <PanelHdr label="PeriodSection" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="Event Card BG" badge="공유">
+        <div><div className="ctrl-group__label">카드 배경 컬러</div><ColorPicker hex={sectionBg} onChange={setSectionBg}/></div>
+      </CtrlCard>
+      <CtrlCard label="기간 텍스트" defaultOpen={false}>
+        <div className="ctrl-info">미리보기의 날짜 텍스트를<br/>직접 클릭해서 편집하세요</div>
+      </CtrlCard>
+    </>);
+    if (type === 'disclaimer') return (<>
+      <PanelHdr label="Disclaimer" onDelete={() => removeSection(activeSection)} />
+      <CtrlCard label="DisclaimerSection" badge="고정">
+        <div className="ctrl-info">텍스트는 미리보기에서<br/>직접 클릭해 편집하세요.</div>
+      </CtrlCard>
+    </>);
     return null;
   };
 
-  return (
-    <div className="builder">
-
-      {/* ── 모바일 미리보기 ─────────────────────────────── */}
-      <div className="preview-wrap">
-        <div className="preview-badge">Mobile Preview · 375px</div>
-        <div className="phone-frame">
-
-          {/* NavBar – 고정, 편집 불필요 */}
-          <div className="nav-bar">
-            <span className="nav-bar__back">‹ Back</span>
+  /* ── renderSection ───────────────────────────────────── */
+  const renderSection = (key, type) => {
+    switch (type) {
+      case 'hero': return (
+        <div key={key} {...secProps(key,'Hero')}>
+          <div className="hero">
+            {heroImg
+              ? <img src={heroImg} alt="hero" />
+              : <div className="hero__empty"><svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> 이미지를 업로드하세요</div>}
+            <EditableText tag="div" className="hero__title" value={heroTitle} onChange={setHeroTitle} />
           </div>
-
-          {/* EventHero */}
-          <div {...secProps('hero', 'Hero')}>
-            <div className="hero">
-              {heroImg
-                ? <img src={heroImg} alt="hero" />
-                : <div className="hero__empty">
-                    <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                      <rect x="3" y="3" width="18" height="18" rx="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                    이미지를 업로드하세요
+        </div>
+      );
+      case 'tabs': return (
+        <div key={key} {...secProps(key,'Tabs')}>
+          <div className="tabs">{tabs.map((t,i) => <div key={i} className={`tab${activeTab===i?' is-active':''}`} onClick={()=>setActiveTab(i)}>{t}</div>)}</div>
+        </div>
+      );
+      case 'participation': return (
+        <div key={key} {...secProps(key,'Participation')}>
+          <div className="section-wrap">
+            <EditableText tag="span" className="section-title" value={sectionTitles.participation} onChange={v=>updateSectionTitle('participation',v)} />
+            <div className="section-inner" style={{background:sectionBg}}>
+              <div className="step-list">
+                {steps.map((s,i) => (
+                  <div className="step-item" key={i}>
+                    <div className="step-timeline">
+                      <div className="step-bullet" style={{background:accentColor}} />
+                      {i<steps.length-1 && <div className="step-line" style={{background:stepLineColor}} />}
+                    </div>
+                    <div className="step-content">
+                      <EditableText tag="span" className="step-label" style={{color:accentColor}} value={s.label} onChange={v=>updateStep(i,'label',v)} />
+                      <EditableText tag="span" className="step-desc" value={s.desc} onChange={v=>updateStep(i,'desc',v)} />
+                    </div>
                   </div>
-              }
-              <EditableText
-                tag="div"
-                className="hero__title"
-                value={heroTitle}
-                onChange={setHeroTitle}
-              />
-            </div>
-          </div>
-
-          {/* TabSection */}
-          <div {...secProps('tabs', 'Tabs')}>
-            <div className="tabs">
-              {tabs.map((t, i) => (
-                <div key={i} className={`tab ${activeTab===i?'is-active':''}`} onClick={()=>setActiveTab(i)}>
-                  {t}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ParticipationSection */}
-          <div {...secProps('participation', 'Participation')}>
-            <div className="section-wrap">
-              <EditableText
-                tag="span"
-                className="section-title"
-                value={sectionTitles.participation}
-                onChange={v => updateSectionTitle('participation', v)}
-              />
-              <div className="section-inner" style={{background: sectionBg}}>
-                <div className="step-list">
-                  {steps.map((s, i) => (
-                    <div className="step-item" key={i}>
-                      <div className="step-timeline">
-                        <div className="step-bullet" style={{background: stepColor}} />
-                        {i < steps.length - 1 && <div className="step-line" style={{background: stepLineColor}} />}
-                      </div>
-                      <div className="step-content">
-                        <EditableText
-                          tag="span"
-                          className="step-label"
-                          style={{color: stepColor}}
-                          value={s.label}
-                          onChange={v => updateStep(i, 'label', v)}
-                        />
-                        <EditableText
-                          tag="span"
-                          className="step-desc"
-                          value={s.desc}
-                          onChange={v => updateStep(i, 'desc', v)}
-                        />
-                      </div>
-                      <button
-                        className="step-remove-btn"
-                        onClick={e => { e.stopPropagation(); removeStep(i); }}
-                        title="항목 삭제"
-                      >−</button>
-                    </div>
-                  ))}
-                </div>
-                <div className="step-add-btn" onClick={e => { e.stopPropagation(); addStep(); }}>
-                  <span className="step-add-icon">+</span>
-                  스텝 추가
-                </div>
-                <div className="tip-list">
-                  {tips.map((tip, i) => (
-                    <div className="tip-item" key={i}>
-                      <span className="tip-tag">TIP!</span>
-                      <EditableText
-                        tag="span"
-                        className="tip-text"
-                        value={tip.text}
-                        onChange={v => updateTip(i, v)}
-                      />
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
-            </div>
-          </div>
-
-          {/* RewardSection */}
-          <div {...secProps('reward', 'Reward')}>
-            <div className="section-wrap">
-              <EditableText
-                tag="span"
-                className="section-title"
-                value={sectionTitles.reward}
-                onChange={v => updateSectionTitle('reward', v)}
-              />
-              <div className="section-inner" style={{background: sectionBg, paddingTop: 0, paddingBottom: 0}}>
-                <div className="reward-list">
-                  {rewards.map((r, i) => (
-                    <div className="reward-item" key={i}>
-                      <div className="reward-text">
-                        <EditableText
-                          tag="span"
-                          className="reward-rank"
-                          style={{color: r.rankColor || 'var(--color-gray-84)'}}
-                          value={r.rank}
-                          onChange={v => updateReward(i, 'rank', v)}
-                        />
-                        <EditableText
-                          tag="span"
-                          className="reward-name"
-                          value={r.name}
-                          onChange={v => updateReward(i, 'name', v)}
-                        />
-                      </div>
-                      <div className="reward-img">🎁</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* PeriodSection */}
-          <div {...secProps('period', 'Period')}>
-            <div className="section-wrap">
-              <EditableText
-                tag="span"
-                className="section-title"
-                value={sectionTitles.period}
-                onChange={v => updateSectionTitle('period', v)}
-              />
-              <div className="section-inner" style={{background: sectionBg, paddingTop: 24, paddingBottom: 24}}>
-                <EditableText
-                  tag="span"
-                  className="period-text"
-                  value={periodText}
-                  onChange={setPeriodText}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* DisclaimerSection */}
-          <div {...secProps('disclaimer', 'Disclaimer')}>
-            <div className="disclaimer">
-              <EditableText
-                tag="span"
-                className="disclaimer__title"
-                value={sectionTitles.disclaimer}
-                onChange={v => updateSectionTitle('disclaimer', v)}
-              />
-              <div className="disclaimer__list">
-                {disclaimers.map((d, i) => (
-                  <div className="disclaimer__item" key={i}>
-                    <span className="disclaimer__bullet">•</span>
-                    <EditableText
-                      tag="span"
-                      className="disclaimer__text"
-                      value={d}
-                      onChange={v => updateDisclaimer(i, v)}
-                    />
+              <div className="tip-list">
+                {tips.map((tip,i) => (
+                  <div className="tip-item" key={i}>
+                    <span className="tip-tag" style={{background:accentColor}}>TIP!</span>
+                    <EditableText tag="span" className="tip-text" value={tip.text} onChange={v=>updateTip(i,v)} />
                   </div>
                 ))}
               </div>
             </div>
           </div>
-
         </div>
+      );
+      case 'reward': return (
+        <div key={key} {...secProps(key,'Reward')}>
+          <div className="section-wrap">
+            <EditableText tag="span" className="section-title" value={sectionTitles.reward} onChange={v=>updateSectionTitle('reward',v)} />
+            <div className="section-inner" style={{background:sectionBg,paddingTop:0,paddingBottom:0}}>
+              <div className="reward-list">
+                {rewards.map((r,i) => (
+                  <div className="reward-item" key={i}>
+                    <div className="reward-text">
+                      <EditableText tag="span" className="reward-rank" style={{color:accentColor}} value={r.rank} onChange={v=>updateReward(i,'rank',v)} />
+                      <EditableText tag="span" className="reward-name" value={r.name} onChange={v=>updateReward(i,'name',v)} />
+                    </div>
+                    <div className="reward-img">{r.img ? <img src={r.img} alt="reward" style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:8}} /> : '🎁'}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+      case 'period': return (
+        <div key={key} {...secProps(key,'Period')}>
+          <div className="section-wrap">
+            <EditableText tag="span" className="section-title" value={sectionTitles.period} onChange={v=>updateSectionTitle('period',v)} />
+            <div className="section-inner" style={{background:sectionBg,paddingTop:24,paddingBottom:24}}>
+              <EditableText tag="span" className="period-text" value={periodText} onChange={setPeriodText} />
+            </div>
+          </div>
+        </div>
+      );
+      case 'disclaimer': return (
+        <div key={key} {...secProps(key,'Disclaimer')}>
+          <div className="disclaimer">
+            <EditableText tag="span" className="disclaimer__title" value={sectionTitles.disclaimer} onChange={v=>updateSectionTitle('disclaimer',v)} />
+            <div className="disclaimer__list">
+              {disclaimers.map((d,i) => (
+                <div className="disclaimer__item" key={i}>
+                  <span className="disclaimer__bullet">•</span>
+                  <EditableText tag="span" className="disclaimer__text" value={d} onChange={v=>updateDisclaimer(i,v)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="builder" onClick={() => { setActiveSection(null); setInsertOpen(null); }}>
+
+      {/* ── 왼쪽 패널 ───────────────────────────────────── */}
+      <div className="tpl-panel" onClick={e => e.stopPropagation()}>
+
+        {/* Tab switcher */}
+        <div className="tpl-tabs">
+          <button className={`tpl-tab-btn${leftTab==='template'?' is-active':''}`}
+            onClick={() => { setLeftTab('template'); setInsertOpen(null); }}>Templates</button>
+          <button className={`tpl-tab-btn${leftTab==='insert'?' is-active':''}`}
+            onClick={() => setLeftTab('insert')}>Insert</button>
+        </div>
+
+        {/* Template list */}
+        {leftTab === 'template' && <>
+          <div className="tpl-scroll">
+            <div className="tpl-section-label">이벤트 타입</div>
+            {TEMPLATES.map(tpl => (
+              <div
+                key={tpl.id}
+                className={`tpl-row${activeTemplate===tpl.id?' is-active':''}`}
+                onClick={() => { if (!tpl.available) { alert('준비 중인 템플릿입니다 🚧'); return; } setActiveTemplate(tpl.id); }}
+              >
+                <div className="tpl-row__swatch" style={{background: tpl.swatchBg}}>{tpl.emoji}</div>
+                <span className="tpl-row__name">{tpl.name}</span>
+                {tpl.available
+                  ? <span className="tpl-row__chevron">›</span>
+                  : <span className="tpl-row__badge">준비중</span>}
+              </div>
+            ))}
+          </div>
+          <div className="tpl-actions">
+            <button className="tpl-deploy-btn" onClick={deployPage} disabled={deploying}>
+              {deploying
+                ? <><span className="modal__spinner"/> 준비 중...</>
+                : <>🚀 배포하기</>}
+            </button>
+            <button className="tpl-export-btn" onClick={() => setShowExport(true)}>
+              ↓ JSON 내보내기
+            </button>
+          </div>
+        </>}
+
+        {/* Insert list */}
+        {leftTab === 'insert' && <>
+          <div className="tpl-scroll">
+            <div className="tpl-section-label">섹션 타입</div>
+            {SECTION_TYPES.map(sec => (
+              <div
+                key={sec.id}
+                className={`ins-row${insertOpen===sec.id?' is-open':''}`}
+                onClick={() => setInsertOpen(o => o===sec.id ? null : sec.id)}
+              >
+                <div className="ins-row__icon" style={{background: sec.color}}>{sec.emoji}</div>
+                <span className="ins-row__name">{sec.name}</span>
+                <span className="ins-row__arrow">›</span>
+              </div>
+            ))}
+          </div>
+          <div className="tpl-actions">
+            <button className="tpl-deploy-btn" onClick={deployPage} disabled={deploying}>
+              {deploying
+                ? <><span className="modal__spinner"/> 준비 중...</>
+                : <>🚀 배포하기</>}
+            </button>
+          </div>
+        </>}
       </div>
 
-      {/* ── Fixed 편집 패널 ──────────────────────────── */}
-      <div className="panel">
-        {/* 탭 바 */}
-        <div className="panel-tabs">
-          {PANEL_TABS.map(t => (
-            <div
-              key={t.key}
-              className={`panel-tab${activeSection === t.key ? ' is-active' : ''}`}
-              onClick={() => setActiveSection(t.key)}
-            >{t.label}</div>
+      {/* ── Insert sub-panel flyout ──────────────────────── */}
+      {leftTab === 'insert' && insertOpen && (() => {
+        const sec = SECTION_TYPES.find(s => s.id === insertOpen);
+        if (!sec) return null;
+        return (
+          <div className="ins-subpanel" onClick={e => e.stopPropagation()}>
+            <div className="ins-subpanel__header">
+              <div className="ins-subpanel__title">
+                <span>{sec.emoji}</span>
+                <span>{sec.name}</span>
+              </div>
+              <button className="ins-subpanel__close" onClick={() => setInsertOpen(null)}>✕</button>
+            </div>
+            <div className="ins-subpanel__scroll">
+              {sec.variants.map(v => (
+                <div
+                  key={v.id}
+                  className={`var-card${!v.available?' is-soon':''}`}
+                  title={!v.available ? '준비 중인 디자인입니다' : '드래그해서 캔버스에 추가'}
+                  draggable={v.available}
+                  onDragStart={v.available ? (e => handleVariantDragStart(e, sec)) : undefined}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => {
+                    if (!v.available) return;
+                    addSection(sec.id);
+                    setActiveSection(sec.id);
+                  }}
+                >
+                  <div className="var-card__thumb">
+                    <SectionThumb type={sec.id} variant={v.id} />
+                  </div>
+                  <div className="var-card__footer">
+                    <span className="var-card__name">{v.name}</span>
+                    {v.available
+                      ? <span className="var-card__badge">선택</span>
+                      : <span className="var-card__badge var-card__badge--soon">준비중</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── 모바일 미리보기 ─────────────────────────────── */}
+      <div className="preview-wrap">
+        <div className="canvas-toolbar">
+          <div className="preview-badge" style={{margin:0}}>Mobile Preview · 375px</div>
+          <button className="canvas-reset-btn" onClick={resetSections} title="전체 섹션을 초기 템플릿으로 되돌립니다">
+            ↺ Reset
+          </button>
+        </div>
+        <div className="phone-frame">
+          <div className="nav-bar"><span className="nav-bar__back">‹ Back</span></div>
+
+          {/* Dynamic sections + drop zones */}
+          {sections.map(({key, type}, i) => (
+            <React.Fragment key={key}>
+              <DropZone
+                index={i} dropIdx={dropIdx} dragging={!!draggingSec}
+                onDragOver={setDropIdx} onDrop={handleDropOnCanvas}
+                onDragLeave={() => setDropIdx(null)}
+              />
+              {renderSection(key, type)}
+            </React.Fragment>
           ))}
-        </div>
-        {/* 탭 콘텐츠 */}
-        <div className="panel-body">
-          {renderTabContent()}
+          <DropZone
+            index={sections.length} dropIdx={dropIdx} dragging={!!draggingSec}
+            onDragOver={setDropIdx} onDrop={handleDropOnCanvas}
+            onDragLeave={() => setDropIdx(null)}
+          />
         </div>
       </div>
+
+      <input ref={rewardFileRef} type="file" accept="image/*" style={{display:'none'}} onChange={onRFile} />
+
+      {/* Drag ghost (positioned offscreen, used as drag image) */}
+      <div ref={ghostRef} className="drag-ghost">
+        <span className="drag-ghost__icon">🖼</span>
+        <span className="drag-ghost__name">Section</span>
+      </div>
+
+      {/* ── Right edit panel ─────────────────────────── */}
+      <div className="panel" onClick={e => e.stopPropagation()}>
+        {renderPanel()}
+      </div>
+
+      {/* ── Deploy modal ─────────────────────────────── */}
+      {showDeploy && (
+        <div className="modal-overlay" onClick={() => setShowDeploy(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal__title">🚀 배포 준비 완료!</div>
+            <div className="modal__desc">
+              <strong>zepeto-event.html</strong> 파일이 다운로드됐어요.<br/>아래 단계를 따라 무료로 즉시 배포하세요.
+            </div>
+            <div className="modal__steps">
+              <div className="modal__step">
+                <div className="modal__step-num">1</div>
+                <div className="modal__step-text">다운로드된 <strong>zepeto-event.html</strong> 파일을 찾아요</div>
+              </div>
+              <div className="modal__step">
+                <div className="modal__step-num">2</div>
+                <div className="modal__step-text">아래 버튼을 눌러 <strong>Netlify Drop</strong> 사이트를 열어요</div>
+              </div>
+              <div className="modal__step">
+                <div className="modal__step-num">3</div>
+                <div className="modal__step-text">파일을 사이트 안으로 <strong>드래그 앤 드롭</strong>하면 끝! 링크가 바로 생성돼요 🎉</div>
+              </div>
+            </div>
+            <a className="modal__netlify" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+              Netlify Drop 열기 →
+            </a>
+            <div className="modal__actions">
+              <button className="modal__btn modal__btn--secondary" onClick={() => setShowDeploy(false)}>닫기</button>
+              <button className="modal__btn modal__btn--primary" onClick={deployPage}>파일 다시 받기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Export JSON modal ────────────────────────── */}
+      {showExport && (
+        <div className="modal-overlay" onClick={() => setShowExport(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal__title">JSON 내보내기</div>
+            <div className="modal__desc">Figma 플러그인으로 불러오거나 개발팀에 전달할 수 있습니다. 이미지는 별도 첨부 필요.</div>
+            <div className="modal__code">{exportJSON}</div>
+            <div className="modal__actions">
+              <button className="modal__btn modal__btn--secondary" onClick={() => setShowExport(false)}>닫기</button>
+              <button className="modal__btn modal__btn--primary" onClick={downloadExport}>JSON 다운로드</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
